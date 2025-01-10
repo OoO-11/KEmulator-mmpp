@@ -108,6 +108,7 @@ public final class KeyMapping {
 		KeyMapping.strToPCKey.put("MIDDLE", String.valueOf(mid));
 		KeyMapping.strToPCKey.put("S1", String.valueOf(s1));
 		KeyMapping.strToPCKey.put("S2", String.valueOf(s2));
+		KeyMapping.strToPCKey.put("CLR", "-8");
 	}
 
 	private static void method606() {
@@ -131,6 +132,7 @@ public final class KeyMapping {
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[16], "MIDDLE");
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[17], "S1");
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[18], "S2");
+		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[19], "CLR");
 	}
 
 	public static void mapDeviceKey(final int n, final String s) {
@@ -218,7 +220,10 @@ public final class KeyMapping {
 			return String.valueOf(n);
 		}
 		final Object value;
+//		System.out.println(KeyMapping.deviceKeyToStr.get("21"));
+//		System.out.println(KeyMapping.deviceKeycodes[19]);
 		if ((value = KeyMapping.deviceKeyToStr.get(String.valueOf(n))) != null) {
+//			System.out.println("here value : " + value);
 			return (String) KeyMapping.strToPCKey.get(value);
 		}
 		if (Settings.fpsMode) {
@@ -294,6 +299,6 @@ public final class KeyMapping {
 		KeyMapping.keysTable.put("9", "Insert");
 		KeyMapping.keysTable.put("13", "Enter");
 		KeyMapping.keysTable.put("80", "Enter");
-		KeyMapping.deviceKeycodes = new String[]{"48", "55", "56", "57", "52", "53", "54", "49", "50", "51", "42", "47", "1", "2", "3", "4", "13", "10", "11"};
+		KeyMapping.deviceKeycodes = new String[]{"48", "55", "56", "57", "52", "53", "54", "49", "50", "51", "42", "47", "1", "2", "3", "4", "13", "10", "11", "8"};
 	}
 }

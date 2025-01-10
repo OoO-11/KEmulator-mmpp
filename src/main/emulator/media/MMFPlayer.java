@@ -10,13 +10,13 @@ public class MMFPlayer {
 		super();
 	}
 
-	public static boolean a() {
+	public static boolean mmfplayerinit() {
 		if (MMFPlayer.initialized) {
 			return true;
 		}
-		if (Emulator.isX64()) {
-			return false;
-		}
+//		if (Emulator.isX64()) {
+//			return false;
+//		}
 		try {
 			i.a("mmfplayer");
 			initMMFLibrary(Emulator.getAbsolutePath() + "/ma3smwemu.dll");

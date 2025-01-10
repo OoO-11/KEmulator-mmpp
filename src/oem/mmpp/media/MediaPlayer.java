@@ -16,7 +16,9 @@
 
 package mmpp.media;
 
+import emulator.Emulator;
 import emulator.custom.CustomJarResources;
+import com.samsung.util.AudioClip;
 
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
@@ -28,82 +30,102 @@ import java.io.InputStream;
 
 public class MediaPlayer {
 	private Player player;
+	private AudioClip audio;
 	private boolean loop;
 	private String currentVolume = String.valueOf(MAX_VOLUME);
 	private static final int MAX_VOLUME = 5;
 
 	public void setMediaLocation(String location) {
+		Emulator.getEmulator().getLogStream().println("mmpp setMediaLocation to " + location);
 		try {
-			InputStream is = CustomJarResources.getResourceAsStream(null, location);
-			player = Manager.createPlayer(is, "audio/midi");
-			player.realize();
-			is.close();
+//			InputStream is = CustomJarResources.getResourceAsStream(null, location);
+//			player = Manager.createPlayer(is, "audio/mmf");
+//			player.realize();
+//			is.close();
+			audio = new AudioClip(AudioClip.TYPE_MMF, location);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (MediaException e) {
-			e.printStackTrace();
+//		} catch (MediaException e) {
+//			e.printStackTrace();
 		}
 	}
 
 	public void setMediaSource(byte[] buffer, int offset, int length) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(buffer, offset, length);
-			player = Manager.createPlayer(bis, "audio/midi");
-			player.realize();
-			bis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MediaException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			ByteArrayInputStream bis = new ByteArrayInputStream(buffer, offset, length);
+//			player = Manager.createPlayer(bis, "audio/mmf");
+//			player.realize();
+//			bis.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (MediaException e) {
+//			e.printStackTrace();
+//		}
+		Emulator.getEmulator().getLogStream().println("mmpp setMediaSource");
+		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, offset, length);
 	}
 
 	public void setVolumeLevel(String level) {
-		int setLevel = Integer.valueOf(level) * 100 / MAX_VOLUME;
-		VolumeControl volumeControl = (VolumeControl) player.getControl("VolumeControl");
-		volumeControl.setLevel(setLevel);
+		Emulator.getEmulator().getLogStream().println("mmpp setVolumeLevel to " + level);
+        audio.volume = Integer.parseInt(level);
 		currentVolume = level;
 	}
 
 	public String getVolumeLevel() {
+		Emulator.getEmulator().getLogStream().println("mmpp getVolumeLevel " + currentVolume);
 		return currentVolume;
 	}
 
 	public void start() {
-		try {
-			player.start();
-		} catch (MediaException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			player.start();
+//
+//		} catch (MediaException e) {
+//			e.printStackTrace();
+//		}
+		Emulator.getEmulator().getLogStream().println("mmpp start " + currentVolume);
+		audio.play(1, Integer.parseInt(currentVolume));
 	}
 
 	public void pause() {
-		try {
-			player.stop();
-		} catch (MediaException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			player.stop();
+//		} catch (MediaException e) {
+//			e.printStackTrace();
+//		}
+		Emulator.getEmulator().getLogStream().println("mmpp pause");
+		audio.pause();
 	}
 
 	public void resume() {
-		try {
-			player.start();
-		} catch (MediaException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			player.start();
+//		} catch (MediaException e) {
+//			e.printStackTrace();
+//		}
+		Emulator.getEmulator().getLogStream().println("mmpp resume" + currentVolume);
+		audio.resume();
 	}
 
 	public void stop() {
-		player.close();
+//		if(player != null){
+//			player.close();
+//		}
+		Emulator.getEmulator().getLogStream().println("mmpp stop");
+		if(audio != null) {
+			audio.stop();
+		}
 	}
 
 	public void setPlayBackLoop(boolean val) {
+		Emulator.getEmulator().getLogStream().println("mmpp setPlayBackLoop " + val);
 		loop = val;
-		int loopCount = val ? -1 : 1;
-		player.setLoopCount(loopCount);
+//		int loopCount = val ? -1 : 1;
+//		player.setLoopCount(loopCount);
 	}
 
 	public boolean getPlayBackLoop() {
+		Emulator.getEmulator().getLogStream().println("mmpp getPlayBackLoop");
 		return loop;
 	}
 }

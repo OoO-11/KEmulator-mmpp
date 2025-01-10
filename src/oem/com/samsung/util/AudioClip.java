@@ -1,5 +1,6 @@
 package com.samsung.util;
 
+import emulator.Emulator;
 import emulator.custom.CustomJarResources;
 import emulator.media.MMFPlayer;
 
@@ -52,10 +53,12 @@ public class AudioClip {
 		}
 		if (b.length > 4 && b[0] == 77 && b[1] == 77 && b[2] == 77 && b[3] == 68) { // mmf header check
 			type = TYPE_MMF;
+//			Emulator.getEmulator().getLogStream().println("input is mmf");
 		}
 		this.type = type;
 		if (type == TYPE_MMF) {
-			this.mmfInit = MMFPlayer.a();
+			this.mmfInit = MMFPlayer.mmfplayerinit();
+			Emulator.getEmulator().getLogStream().println("mmpp mmfplayer init : " + this.mmfInit);
 			this.data = b;
 			this.dataLen = b.length;
 			this.status = STATUS_STOP;

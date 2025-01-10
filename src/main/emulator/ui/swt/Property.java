@@ -237,6 +237,7 @@ public final class Property implements IProperty, SelectionListener {
 	private String down;
 	private String left;
 	private String right;
+	private String clr;
 	private int fontSmallSize;
 	private int fontMediumSize;
 	private int fontLargeSize;
@@ -449,6 +450,7 @@ public final class Property implements IProperty, SelectionListener {
 			Devices.setProperty("KEY_DOWN", this.down);
 			Devices.setProperty("KEY_LEFT", this.left);
 			Devices.setProperty("KEY_RIGHT", this.right);
+			Devices.setProperty("KEY_CLR", this.clr);
 			Devices.writeProperties();
 		}
 	}
@@ -463,6 +465,7 @@ public final class Property implements IProperty, SelectionListener {
 		this.down = Devices.getProperty("KEY_DOWN");
 		this.left = Devices.getProperty("KEY_LEFT");
 		this.right = Devices.getProperty("KEY_RIGHT");
+		this.clr = Devices.getProperty("KEY_CLR");
 	}
 
 	public void loadProperties() {
@@ -490,6 +493,7 @@ public final class Property implements IProperty, SelectionListener {
 			this.down = properties.getProperty("KEY_DOWN", "-2");
 			this.left = properties.getProperty("KEY_LEFT", "-3");
 			this.right = properties.getProperty("KEY_RIGHT", "-4");
+			this.clr = properties.getProperty("KEY_CLR", "-8");
 			Settings.g2d = (properties.getProperty("2D_Graphics_Engine", "AWT").equalsIgnoreCase("SWT") ? 0 : 1);
 			Settings.g3d = (properties.getProperty("3D_Graphics_Engine", "LWJ").equalsIgnoreCase("LWJ") ? 1 : 0);
 			Settings.micro3d = (properties.getProperty("Micro3D_Engine", Emulator.isX64() ? "GL" : "DLL").equalsIgnoreCase("GL") ? 1 : 0);
@@ -516,6 +520,7 @@ public final class Property implements IProperty, SelectionListener {
 			KeyMapping.mapDeviceKey(16, KeyMapping.method601(properties.getProperty("MAP_KEY_MIDDLE")));
 			KeyMapping.mapDeviceKey(17, KeyMapping.method601(properties.getProperty("MAP_KEY_LSOFT")));
 			KeyMapping.mapDeviceKey(18, KeyMapping.method601(properties.getProperty("MAP_KEY_RSOFT")));
+			KeyMapping.mapDeviceKey(19, KeyMapping.method601(properties.getProperty("MAP_KEY_CLR")));
 			Settings.enableKeyCache = Boolean.parseBoolean(properties.getProperty("EnableKeyCache", "false"));
 			Settings.canvasKeyboard = Boolean.parseBoolean(properties.getProperty("CanvasKeyboardMode", "true"));
 			Settings.recordKeys = Boolean.parseBoolean(properties.getProperty("RecordKeys", "false"));
@@ -683,6 +688,7 @@ public final class Property implements IProperty, SelectionListener {
 			this.down = "-2";
 			this.left = "-3";
 			this.right = "-4";
+			this.clr = "-8";
 			EmulatorScreen.locX = -1;
 			EmulatorScreen.locY = -1;
 			Settings.fileEncoding = "ISO-8859-1";
@@ -727,6 +733,7 @@ public final class Property implements IProperty, SelectionListener {
 			properties.setProperty("KEY_DOWN", this.down);
 			properties.setProperty("KEY_LEFT", this.left);
 			properties.setProperty("KEY_RIGHT", this.right);
+			properties.setProperty("KEY_CLR", this.clr);
 			properties.setProperty("2D_Graphics_Engine", (Settings.g2d == 0) ? "SWT" : "AWT");
 			properties.setProperty("3D_Graphics_Engine", (Settings.g3d == 0) ? "SWERVE" : "LWJ");
 			properties.setProperty("Micro3D_Engine", (Settings.micro3d == 0) ? "DLL" : "GL");
@@ -752,6 +759,7 @@ public final class Property implements IProperty, SelectionListener {
 			properties.setProperty("MAP_KEY_MIDDLE", KeyMapping.get(16));
 			properties.setProperty("MAP_KEY_LSOFT", KeyMapping.get(17));
 			properties.setProperty("MAP_KEY_RSOFT", KeyMapping.get(18));
+			properties.setProperty("MAP_KEY_CLR", KeyMapping.get(19));
 			properties.setProperty("EnableKeyCache", String.valueOf(Settings.enableKeyCache));
 			properties.setProperty("CanvasKeyboardMode", String.valueOf(Settings.canvasKeyboard));
 			properties.setProperty("RecordKeys", String.valueOf(Settings.recordKeys));
@@ -920,6 +928,7 @@ public final class Property implements IProperty, SelectionListener {
 		this.right = this.aText727.getText().trim();
 		KeyMapping.mapDeviceKey(17, KeyMapping.method601(Property.aStringArray661[17]));
 		KeyMapping.mapDeviceKey(18, KeyMapping.method601(Property.aStringArray661[18]));
+		KeyMapping.mapDeviceKey(19, "8");
 		KeyMapping.mapDeviceKey(14, KeyMapping.method601(Property.aStringArray661[14]));
 		KeyMapping.mapDeviceKey(15, KeyMapping.method601(Property.aStringArray661[15]));
 		KeyMapping.mapDeviceKey(12, KeyMapping.method601(Property.aStringArray661[12]));
@@ -946,6 +955,7 @@ public final class Property implements IProperty, SelectionListener {
 		Devices.setProperty("KEY_DOWN", this.down);
 		Devices.setProperty("KEY_LEFT", this.left);
 		Devices.setProperty("KEY_RIGHT", this.right);
+		Devices.setProperty("KEY_CLR", this.clr);
 		Devices.writeProperties();
 		KeyMapping.init();
 		if (Settings.enableKeyCache != this.aButton696.getSelection()) {
@@ -3028,7 +3038,7 @@ public final class Property implements IProperty, SelectionListener {
 	}
 
 	static {
-		Property.aStringArray661 = new String[19];
+		Property.aStringArray661 = new String[20];
 	}
 
 	public void widgetSelected(SelectionEvent e) {
