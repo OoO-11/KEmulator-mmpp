@@ -58,7 +58,6 @@ public class AudioClip {
 		this.type = type;
 		if (type == TYPE_MMF) {
 			this.mmfInit = MMFPlayer.mmfplayerinit();
-			Emulator.getEmulator().getLogStream().println("mmpp mmfplayer init : " + this.mmfInit);
 			this.data = b;
 			this.dataLen = b.length;
 			this.status = STATUS_STOP;
