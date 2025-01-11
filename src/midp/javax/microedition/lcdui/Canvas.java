@@ -3,6 +3,7 @@ package javax.microedition.lcdui;
 import com.nokia.mid.ui.CanvasGraphicsItem;
 import com.nokia.mid.ui.CanvasItem;
 import com.nokia.mid.ui.TextEditor;
+import mmpp.microedition.lcdui.GraphicsX;
 import emulator.Emulator;
 import emulator.KeyMapping;
 import emulator.Settings;
@@ -48,7 +49,8 @@ public abstract class Canvas extends Displayable {
 	public void _invokePaint(IImage buffer, IImage xray) {
 		if (!Settings.xrayView) xray = null;
 		if (graphics == null) {
-			graphics = new Graphics(buffer, xray);
+//			graphics = new Graphics(buffer, xray);
+			graphics = new GraphicsX(buffer);
 		}
 		graphics._reset(buffer, xray);
 		this.paint(graphics);
@@ -59,7 +61,8 @@ public abstract class Canvas extends Displayable {
 	public void _invokePaint(IImage buffer, IImage xray, int x, int y, int w, int h) {
 		if (!Settings.xrayView) xray = null;
 		if (graphics == null) {
-			graphics = new Graphics(buffer, xray);
+//			graphics = new Graphics(buffer, xray);
+			graphics = new GraphicsX(buffer);
 		}
 		graphics._reset(buffer, xray);
 		graphics.setClip(x, y, w, h);

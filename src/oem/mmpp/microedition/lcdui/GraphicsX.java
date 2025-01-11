@@ -10,9 +10,12 @@ import emulator.Emulator;
 public class GraphicsX extends Graphics {
     public static int DEFAULT_ALPHA = 256;
 
-    GraphicsX(IImage paramImageDelegate) {
-        super(paramImageDelegate);
+    private boolean xorMode = false;
+    private int xorColor = 0;
+    private int alpha = 256;
 
+    public GraphicsX(IImage paramImageDelegate) {
+        super(paramImageDelegate);
         Emulator.getEmulator().getLogStream().println("[mmpp] GraphicsX");
     }
 
@@ -32,19 +35,35 @@ public class GraphicsX extends Graphics {
 
     public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints){
         Emulator.getEmulator().getLogStream().println("[mmpp] drawPolygon");
+        if (xPoints == null || yPoints == null || xPoints.length != yPoints.length || nPoints <= 0 || nPoints > xPoints.length) {
+            throw new IllegalArgumentException("Invalid points array or number of points.");
+        }
+        for (int i = 0; i < nPoints - 1; i++) {
+            drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+        }
+        drawLine(xPoints[nPoints - 1], yPoints[nPoints - 1], xPoints[0], yPoints[0]);
     }
 
     public void drawPolyline(int[] xPoints, int[] yPoints, int nPoints){
         Emulator.getEmulator().getLogStream().println("[mmpp] drawPolyline");
+        for (int i = 0; i < nPoints - 1; i++) {
+            drawLine(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1]);
+        }
     }
 
     public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints){
         Emulator.getEmulator().getLogStream().println("[mmpp] fillPolygon");
+        for (int i = 0; i < nPoints - 1; i++) {
+            fillTriangle(xPoints[i], yPoints[i], xPoints[i + 1], yPoints[i + 1], xPoints[0], yPoints[0]);
+        }
     }
 
     public int getPixel(int x, int y) {
         Emulator.getEmulator().getLogStream().println("[mmpp] getPixel");
-        return 0;
+        if (x < this.getClipX() || y < this.getClipY() || x >= this.getClipX() + this.getClipWidth() || y >= this.getClipY() + this.getClipHeight()) {
+            throw new IllegalArgumentException("Point is outside the clipping region.");
+        }
+        return this.getImage().getRGB(x, y);
     }
 
     public void setAlpha(int alpha) {
@@ -52,18 +71,27 @@ public class GraphicsX extends Graphics {
         if(alpha < 0 || alpha > 256){
             throw new IllegalArgumentException("alpha should be 0~256.");
         }
-        DEFAULT_ALPHA = alpha;
+        this.alpha = alpha;
     }
 
     public void setPaintMode() {
         Emulator.getEmulator().getLogStream().println("[mmpp] setPaintMode");
+        this.xorMode = false;
     }
 
     public void setPixel(int x, int y, int RGB) {
         Emulator.getEmulator().getLogStream().println("[mmpp] setPixel");
+        if (x < this.getClipX() || y < this.getClipY() || x >= this.getClipX() + this.getClipWidth() || y >= this.getClipY() + this.getClipHeight()) {
+            throw new IllegalArgumentException("Point is outside the clipping region.");
+        }
+        this.getImage().setRGB(x, y, RGB);
     }
 
     public void setXORMode(int RGB) {
         Emulator.getEmulator().getLogStream().println("[mmpp] setXORMode");
+        this.xorMode = true;
+        this.xorColor = RGB;
+        this.setColor(RGB);
+        this.setAlpha(DEFAULT_ALPHA);
     }
 }
