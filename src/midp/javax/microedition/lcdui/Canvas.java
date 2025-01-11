@@ -271,6 +271,10 @@ public abstract class Canvas extends Displayable {
 					n3 = 8;
 					break;
 				}
+//				if (n == KeyMapping.getArrowKeyFromDevice(GAME_A)) {
+//					n3 = 9;
+//					break;
+//				}
 				return n2;
 			}
 		}
@@ -435,8 +439,8 @@ public abstract class Canvas extends Displayable {
 				return 1 << 15; // 15 Down
 			case FIRE:
 				return 1 << 16; // 16 Select
-			case GAME_C:
-				return 1 << 19; // 19 Softkey 3
+			case GAME_C:		//GAME_A
+				return 1 << 19; // 19 CLR
 		}
 		switch (vKey) {
 			case KEY_NUM0:

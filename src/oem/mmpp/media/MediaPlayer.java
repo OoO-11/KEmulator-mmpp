@@ -36,7 +36,7 @@ public class MediaPlayer {
 	private static final int MAX_VOLUME = 5;
 
 	public void setMediaLocation(String location) {
-		Emulator.getEmulator().getLogStream().println("mmpp setMediaLocation to " + location);
+		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaLocation to " + location);
 		try {
 //			InputStream is = CustomJarResources.getResourceAsStream(null, location);
 //			player = Manager.createPlayer(is, "audio/mmf");
@@ -61,18 +61,20 @@ public class MediaPlayer {
 //		} catch (MediaException e) {
 //			e.printStackTrace();
 //		}
-		Emulator.getEmulator().getLogStream().println("mmpp setMediaSource");
+		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaSource");
 		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, offset, length);
 	}
 
 	public void setVolumeLevel(String level) {
-		Emulator.getEmulator().getLogStream().println("mmpp setVolumeLevel to " + level);
+		Emulator.getEmulator().getLogStream().println("[mmpp] setVolumeLevel to " + level);
+		if(audio == null)
+			return;
         audio.volume = Integer.parseInt(level);
 		currentVolume = level;
 	}
 
 	public String getVolumeLevel() {
-		Emulator.getEmulator().getLogStream().println("mmpp getVolumeLevel " + currentVolume);
+		Emulator.getEmulator().getLogStream().println("[mmpp] getVolumeLevel " + currentVolume);
 		return currentVolume;
 	}
 
@@ -83,7 +85,9 @@ public class MediaPlayer {
 //		} catch (MediaException e) {
 //			e.printStackTrace();
 //		}
-		Emulator.getEmulator().getLogStream().println("mmpp start " + currentVolume);
+		Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
+		if(audio == null)
+			return;
 		audio.play(1, Integer.parseInt(currentVolume));
 	}
 
@@ -93,7 +97,7 @@ public class MediaPlayer {
 //		} catch (MediaException e) {
 //			e.printStackTrace();
 //		}
-		Emulator.getEmulator().getLogStream().println("mmpp pause");
+		Emulator.getEmulator().getLogStream().println("[mmpp] pause");
 		audio.pause();
 	}
 
@@ -103,7 +107,9 @@ public class MediaPlayer {
 //		} catch (MediaException e) {
 //			e.printStackTrace();
 //		}
-		Emulator.getEmulator().getLogStream().println("mmpp resume" + currentVolume);
+		Emulator.getEmulator().getLogStream().println("[mmpp] resume" + currentVolume);
+		if(audio == null)
+			return;
 		audio.resume();
 	}
 
@@ -111,21 +117,21 @@ public class MediaPlayer {
 //		if(player != null){
 //			player.close();
 //		}
-		Emulator.getEmulator().getLogStream().println("mmpp stop");
+		Emulator.getEmulator().getLogStream().println("[mmpp] stop");
 		if(audio != null) {
 			audio.stop();
 		}
 	}
 
 	public void setPlayBackLoop(boolean val) {
-		Emulator.getEmulator().getLogStream().println("mmpp setPlayBackLoop " + val);
+		Emulator.getEmulator().getLogStream().println("[mmpp] setPlayBackLoop " + val);
 		loop = val;
 //		int loopCount = val ? -1 : 1;
 //		player.setLoopCount(loopCount);
 	}
 
 	public boolean getPlayBackLoop() {
-		Emulator.getEmulator().getLogStream().println("mmpp getPlayBackLoop");
+		Emulator.getEmulator().getLogStream().println("[mmpp] getPlayBackLoop");
 		return loop;
 	}
 }
