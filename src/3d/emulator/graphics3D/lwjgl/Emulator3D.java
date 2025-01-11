@@ -83,6 +83,8 @@ public final class Emulator3D implements IGraphics3D {
 
 	private static long window;
 	private boolean initialized;
+	private boolean egl;
+	private Thread targetThread;
 
 	private Emulator3D() {
 		instance = this;
@@ -115,7 +117,11 @@ public final class Emulator3D implements IGraphics3D {
 		return instance;
 	}
 
-	public synchronized final void bindTarget(Object target) {
+	public void bindTarget(Object target) {
+		bindTarget(target, false);
+	}
+
+	public synchronized final void bindTarget(Object target, boolean forceWindow) {
 		if (exiting) {
 			// Infinite lock instead just throwing an exception
 			try {
@@ -123,6 +129,7 @@ public final class Emulator3D implements IGraphics3D {
 			} catch (InterruptedException ignored) {}
 			throw new IllegalStateException("exiting");
 		}
+		this.egl = forceWindow;
 		Profiler3D.bindTargetCallCount++;
 
 		int w;
@@ -143,26 +150,33 @@ public final class Emulator3D implements IGraphics3D {
 		}
 
 		try {
-			if (!initialized) {
+			if (!initialized || targetThread != Thread.currentThread()) {
+				targetThread = Thread.currentThread();
 				if (glCanvas != null) {
 					disposeGlCanvas();
 				}
-				EmulatorImpl.syncExec(new Runnable() {
-					public void run() {
-						try {
-							Composite parent = ((EmulatorScreen) Emulator.getEmulator().getScreen()).getCanvas();
-							glCanvas = GLCanvasUtil.initGLCanvas(parent, 0, 0);
-							glCanvas.setSize(1, 1);
-							glCanvas.setVisible(true);
-						} catch (Throwable e) {
-							e.printStackTrace();
-							glCanvas = null;
+				if (window != 0) {
+					glfwDestroyWindow(window);
+					window = 0;
+				}
+				if (!forceWindow) {
+					EmulatorImpl.syncExec(new Runnable() {
+						public void run() {
+							try {
+								Composite parent = ((EmulatorScreen) Emulator.getEmulator().getScreen()).getCanvas();
+								glCanvas = GLCanvasUtil.initGLCanvas(parent, 0, 0);
+								glCanvas.setSize(1, 1);
+								glCanvas.setVisible(true);
+							} catch (Throwable e) {
+								e.printStackTrace();
+								glCanvas = null;
+							}
 						}
-					}
-				});
+					});
+				}
 
 				try {
-					if (glCanvas == null) throw new Exception();
+					if (glCanvas == null) throw new Exception("glCanvas == null");
 					GLCanvasUtil.makeCurrent(glCanvas);
 					getCapabilities();
 
@@ -181,7 +195,8 @@ public final class Emulator3D implements IGraphics3D {
 						}
 					});
 				} catch (Exception e) {
-					e.printStackTrace();
+					if (!"glCanvas == null".equals(e.getMessage()))
+						e.printStackTrace();
 
 					if (glCanvas != null) {
 						disposeGlCanvas();
@@ -197,11 +212,17 @@ public final class Emulator3D implements IGraphics3D {
 						glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 						window = glfwCreateWindow(w, h, "M3G", 0, 0);
-						if (window == 0)
-							throw new Exception("Window creation failed");
+						if (window == 0) {
+							throw new Exception("Window creation failed (GLFW Error: " + glfwGetError(null) + ")");
+						}
 					}
 
+
 					glfwMakeContextCurrent(window);
+					int error = glfwGetError(null);
+					if (error != 0) {
+						Emulator.getEmulator().getLogStream().println("GLFW Error: " + error);
+					}
 					getCapabilities();
 				}
 				Emulator.getEmulator().getLogStream().println("GL Renderer: " + GL11.glGetString(GL_RENDERER));
@@ -264,17 +285,19 @@ public final class Emulator3D implements IGraphics3D {
 	public synchronized void releaseTarget() {
 		Profiler3D.releaseTargetCallCount++;
 
-		GL11.glFinish();
-		if (!Settings.m3gFlushImmediately)
-			swapBuffers();
+		if (!egl) {
+			GL11.glFinish();
+			if (!Settings.m3gFlushImmediately)
+				swapBuffers();
 
-		while (!unusedGLTextures.isEmpty())
-			releaseTexture(unusedGLTextures.get(0));
+			while (!unusedGLTextures.isEmpty())
+				releaseTexture(unusedGLTextures.get(0));
 
-		if (exiting) {
-			while (!usedGLTextures.isEmpty())
-				releaseTexture(usedGLTextures.get(0));
-			return;
+			if (exiting) {
+				while (!usedGLTextures.isEmpty())
+					releaseTexture(usedGLTextures.get(0));
+				return;
+			}
 		}
 
 		this.target = null;
