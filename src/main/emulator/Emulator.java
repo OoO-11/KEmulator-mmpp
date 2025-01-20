@@ -48,6 +48,7 @@ public class Emulator implements Runnable {
 	public static String midletClassName;
 	public static String classPath;
 	public static String jadPath;
+	public static String zipPath;
 	public static String deviceName;
 	public static String deviceFile;
 	public static String[] commandLineArguments;
@@ -388,6 +389,116 @@ public class Emulator implements Runnable {
 			return file.getAbsolutePath();
 		}
 		return null;
+	}
+
+	public static boolean getZip() throws Exception {
+		// extract zip
+		Emulator.zipPath = Emulator.midletJar;
+		ZipFile zipFile =new ZipFile(Emulator.zipPath);
+		Enumeration<? extends ZipEntry> entries = zipFile.getEntries();
+		String msdName = "";
+		while (entries.hasMoreElements()) {
+			final ZipEntry zipEntry;
+			if ((zipEntry = (ZipEntry) entries.nextElement()).getName().endsWith(".msd")) {
+				msdName = zipEntry.getName();
+			}
+		}
+		File temp = new File(Emulator.zipPath);
+		File dir = new File(temp.getParent(), msdName.substring(0, msdName.length() - 4));
+		if(!dir.exists())
+			extract(zipFile, dir);
+
+		File[] files = dir.listFiles();
+
+		// load msd from extracted files
+        assert files != null;
+		Properties props = null;
+        for (File file : files) {
+			String name = file.getName();
+			if(name.endsWith(".jar")) {
+				Emulator.midletJar = file.getPath();
+			}
+			if(!name.endsWith(".msd")) continue;
+
+			(props = new Properties()).load(new InputStreamReader(new FileInputStream(file), "EUC-KR"));
+			final Enumeration<Object> keys = props.keys();
+			while (keys.hasMoreElements()) {
+				final String s = (String) keys.nextElement();
+				props.put(s, props.getProperty(s));
+			}
+			break;
+		}
+
+		// extract jar
+		Emulator.emulatorimpl.getLogStream().println("Get classes from " + Emulator.midletJar);
+		final ZipFile jarFile;
+		byte[] buffer = new byte[32];
+		try (FileInputStream fis = new FileInputStream(Emulator.midletJar)) {
+			if (fis.read(buffer) != buffer.length) {
+				throw new IOException("Failed to read first 32 bytes.");
+			}
+			File tempFile = File.createTempFile("trimmed", ".jar");
+			try (FileOutputStream fos = new FileOutputStream(tempFile)){
+				byte[] dataBuffer = new byte[1024];
+				int bytesRead;
+				while ((bytesRead = fis.read(dataBuffer)) != -1) {
+					fos.write(dataBuffer, 0, bytesRead);
+				}
+			}
+
+			Emulator.midletJar = tempFile.getPath();
+			System.out.println("jar"+tempFile.getPath());
+		}
+
+		// load jar
+		final Enumeration entriesj = (jarFile = new ZipFile(Emulator.midletJar)).getEntries();
+		while (entriesj.hasMoreElements()) {
+			final ZipEntry zipEntry;
+			if ((zipEntry = (ZipEntry) entriesj.nextElement()).getName().endsWith(".class")) {
+				final String replace = zipEntry.getName().substring(0, zipEntry.getName().length() - 6).replace('/', '.');
+				Emulator.jarClasses.add(replace);
+				Emulator.emulatorimpl.getLogStream().println("Get class " + replace);
+			}
+		}
+
+		assert props != null;
+		Emulator.emulatorimpl.midletProps = props;
+        Emulator.midletClassName = props.getProperty("MIDlet-1");
+		if (Emulator.midletClassName != null) {
+			Emulator.midletClassName = Emulator.midletClassName.substring(Emulator.midletClassName.lastIndexOf(",") + 1).trim();
+		}
+		loadTargetDevice();
+		return true;
+	}
+
+	public static void extract(ZipFile zipFile, File dir) throws IOException {
+		Enumeration<? extends ZipEntry> entries = zipFile.getEntries();
+		byte[] buf = new byte[4096];
+
+		while (entries.hasMoreElements()) {
+			ZipEntry zipEntry = entries.nextElement();
+			InputStream stream = zipFile.getInputStream(zipEntry);
+
+			File newFile = new File(dir, zipEntry.getName());
+
+			if (zipEntry.isDirectory()) {
+				if (!newFile.isDirectory() && !newFile.mkdirs()) {
+					throw new IOException("Cannot create dir " + newFile);
+				}
+			} else {
+				File parent = newFile.getParentFile();
+				if (!parent.isDirectory() && !parent.mkdirs()) {
+					throw new IOException("Cannot create dir " + parent);
+				}
+
+				try (FileOutputStream fos = new FileOutputStream(newFile)) {
+					int len;
+					while ((len = stream.read(buf)) > 0) {
+						fos.write(buf, 0, len);
+					}
+				}
+			}
+		}
 	}
 
 	public static boolean getJarClasses() throws Exception {
@@ -787,7 +898,10 @@ public class Emulator implements Runnable {
 			Emulator.record = new KeyRecords();
 			getLibraries();
 			try {
-				if (!getJarClasses()) {
+				if(Emulator.midletJar.endsWith(".zip")){
+					getZip();
+				}
+				else if (!getJarClasses()) {
 					Emulator.emulatorimpl.getEmulatorScreen().showMessage(UILocale.get("LOAD_CLASSES_ERROR", "Get Classes Failed!! Plz check the input jar or classpath."));
 					System.exit(1);
 					return;
@@ -883,6 +997,7 @@ public class Emulator implements Runnable {
 	}
 
 	static boolean parseLaunchArgs(final String[] array) {
+		System.out.println(Arrays.toString(array));
 		if (array.length < 1) {
 			return false;
 		}

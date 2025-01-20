@@ -1091,7 +1091,7 @@ public final class EmulatorScreen implements
 				pauseStep();
 				final FileDialog fileDialog2;
 				(fileDialog2 = new FileDialog(this.shell, 4096)).setText(UILocale.get("OPEN_JAR_FILE", "Open a jar file"));
-				fileDialog2.setFilterExtensions(new String[]{"*.jar;*.jad", "*.*"});
+				fileDialog2.setFilterExtensions(new String[]{"*.jar;*.jad;*.zip", "*.*"});
 				final String open2;
 				if ((open2 = fileDialog2.open()) != null) {
 					Settings.recordedKeysFile = null;
