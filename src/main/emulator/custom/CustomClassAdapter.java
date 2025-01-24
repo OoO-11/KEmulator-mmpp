@@ -70,7 +70,7 @@ public final class CustomClassAdapter extends ClassVisitor implements Opcodes {
 	}
 
 	public CustomClassAdapter(final ClassVisitor classVisitor, final String aString1165) {
-		super(Opcodes.ASM4, classVisitor);
+		super(Opcodes.ASM9, classVisitor);
 		this.className = aString1165;
 	}
 

@@ -1823,8 +1823,8 @@ public final class EmulatorScreen implements
 			return;
 		}
 		int n = keyEvent.keyCode & 0xFEFFFFFF;
-//		System.out.println("press event / keycode = " + n);
-//		System.out.println("press event / character = " + keyEvent.character);
+		System.out.println("press event / keycode = " + n);
+		System.out.println("press event / character = " + keyEvent.character);
 		if (keyEvent.character >= 33 && keyEvent.character <= 90 && Settings.canvasKeyboard && !(n >= 48 && n <= 57))
 			n = keyEvent.character;
 		if (this.caret.keyPressed(keyEvent) && lastDisplayable instanceof javax.microedition.lcdui.Canvas) {

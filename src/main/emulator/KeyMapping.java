@@ -76,10 +76,10 @@ public final class KeyMapping {
 				n2 = ((Devices.getPropertyInt("KEY_FIRE") != 0) ? Devices.getPropertyInt("KEY_FIRE") : Canvas.FIRE);
 				break;
 			}
-//			case 9: {
-//				n2 = ((Devices.getPropertyInt("KEY_CLR") != 0) ? Devices.getPropertyInt("KEY_CLR") : Canvas.GAME_A);
-//				break;
-//			}
+			case 9: {
+				n2 = ((Devices.getPropertyInt("KEY_CLR") != 0) ? Devices.getPropertyInt("KEY_CLR") : Canvas.KEY_CLR);
+				break;
+			}
 		}
 		return n2;
 	}

@@ -8,7 +8,11 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
 import java.io.*;
 
+import java.util.logging.Logger;
+
 public final class CustomJarResources {
+	private static final Logger logger = Logger.getLogger(CustomJarResources.class.getName());
+
 	public CustomJarResources() {
 	}
 
@@ -23,6 +27,13 @@ public final class CustomJarResources {
 				final ZipEntry entry;
 				if ((entry = (zipFile = new ZipFile(Emulator.midletJar)).getEntry(substring)) == null) {
 					Emulator.getEmulator().getLogStream().println("Custom.jar.getResourceStream: " + s + " (null)");
+//
+//					StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+//					// Logging call stack
+//					for (StackTraceElement element : stackTraceElements) {
+//						logger.info(element.toString());
+//					}
+
 					throw new IOException();
 				}
 				final byte[] array = new byte[(int) entry.getSize()];

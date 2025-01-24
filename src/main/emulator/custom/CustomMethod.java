@@ -143,7 +143,9 @@ public class CustomMethod {
 	}
 
 	public static InputStream getResourceAsStream(final Object o, final String s) {
-		return CustomJarResources.getResourceAsStream(o, s);
+//		return CustomJarResources.getResourceAsStream(o, s);
+		// note: is this necessary?
+		return CustomJarResources.getResourceAsStream(s);
 	}
 
 	public static void showTrackInfo(final String s) {

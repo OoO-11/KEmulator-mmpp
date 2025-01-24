@@ -1,5 +1,7 @@
 package com.skt.m;
 
+import emulator.Emulator;
+
 public class Device {
     // Field constants
     public static final int COLOR_MODE_256C = 0;
@@ -20,10 +22,12 @@ public class Device {
 
     public static void enableRestoreLCD(boolean flag) {
         // VM을 SUSPEND 모드로 전환한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  enableRestoreLCD");
     }
 
     public static void invokeWapBrowser(String url) {
         // 해당 URL로 단말기 내장 WAP 브라우저를 호출한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  invokeWapBrowser");
     }
 
     public static boolean isBacklightEnabled() {
@@ -33,6 +37,7 @@ public class Device {
 
     public static boolean isKeyToneEnabled() {
         // 키가 눌려질 때의 키톤 설정을 리턴한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  isKeyToneEnabled");
         return true;
     }
 
@@ -42,27 +47,33 @@ public class Device {
 
     public static void setColorMode(int mode) {
         // 이미지를 로딩할 때에 설정된 칼라 모드로 메모리에 로딩하게 한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setColorMode");
     }
 
     public static void setKeyRepeatTime(int delay, int interval) {
         // 키를 오래 누르고 있으면 Canvas 클래스의 keyRepeated() 메소드가 호출된다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setKeyRepeatTime");
     }
 
     public static void setKeyToneEnabled(boolean flag) {
         // 키가 눌려질때 자동으로 키톤이 발생하는 기능을 설정한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setKeyToneEnabled");
     }
 
     public static boolean setMelody(int type, String title, byte[] data) {
         // 멜로디를 현재의 벨소리를 저장한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setMelody");
         return true;
     }
 
     public static boolean setSISImage(int type, String title, byte[] data) {
         // SIS 이미지를 현재의 그림 친구로 저장한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setSISImage");
         return true;
     }
 
     public static void setNAI(int flags) {
         // 사용하지 말것
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setNAI");
     }
 }
