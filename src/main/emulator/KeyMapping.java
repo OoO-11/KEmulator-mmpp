@@ -76,10 +76,6 @@ public final class KeyMapping {
 				n2 = ((Devices.getPropertyInt("KEY_FIRE") != 0) ? Devices.getPropertyInt("KEY_FIRE") : Canvas.FIRE);
 				break;
 			}
-			case 9: {
-				n2 = ((Devices.getPropertyInt("KEY_CLR") != 0) ? Devices.getPropertyInt("KEY_CLR") : Canvas.KEY_CLR);
-				break;
-			}
 		}
 		return n2;
 	}
@@ -112,7 +108,17 @@ public final class KeyMapping {
 		KeyMapping.strToPCKey.put("MIDDLE", String.valueOf(mid));
 		KeyMapping.strToPCKey.put("S1", String.valueOf(s1));
 		KeyMapping.strToPCKey.put("S2", String.valueOf(s2));
-		KeyMapping.strToPCKey.put("CLR", "-8");
+		if(Emulator.zipPath != null){
+			KeyMapping.strToPCKey.put("CLR", "8");
+		}
+		else{
+			KeyMapping.strToPCKey.put("CLR", "-8");
+		}
+		KeyMapping.strToPCKey.put("KEY_UP", "141");
+		KeyMapping.strToPCKey.put("KEY_DOWN", "146");
+		KeyMapping.strToPCKey.put("KEY_LEFT", "142");
+		KeyMapping.strToPCKey.put("KEY_RIGHT", "145");
+		KeyMapping.strToPCKey.put("KEY_FIRE", "148");
 	}
 
 	private static void method606() {
@@ -137,6 +143,13 @@ public final class KeyMapping {
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[17], "S1");
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[18], "S2");
 		KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[19], "CLR");
+		if(Emulator.zipPath != null){
+			KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[12], "KEY_UP");
+			KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[13], "KEY_DOWN");
+			KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[14], "KEY_LEFT");
+			KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[15], "KEY_RIGHT");
+			KeyMapping.deviceKeyToStr.put(KeyMapping.deviceKeycodes[16], "KEY_FIRE");
+		}
 	}
 
 	public static void mapDeviceKey(final int n, final String s) {
@@ -224,10 +237,10 @@ public final class KeyMapping {
 			return String.valueOf(n);
 		}
 		final Object value;
-//		System.out.println(KeyMapping.deviceKeyToStr.get("21"));
-//		System.out.println(KeyMapping.deviceKeycodes[19]);
 		if ((value = KeyMapping.deviceKeyToStr.get(String.valueOf(n))) != null) {
-//			System.out.println("here value : " + value);
+//			System.out.println("[KeyMapping.replaceKey] string n : " + String.valueOf(n));
+//			System.out.println("[KeyMapping.replaceKey] here value : " + value);
+//			System.out.println("[KeyMapping.replaceKey] here strToPCKey : " + KeyMapping.strToPCKey.get(value));
 			return (String) KeyMapping.strToPCKey.get(value);
 		}
 		if (Settings.fpsMode) {
@@ -299,7 +312,7 @@ public final class KeyMapping {
 		KeyMapping.keysTable.put("5", "PageUp");
 		KeyMapping.keysTable.put("6", "PageDown");
 		KeyMapping.keysTable.put("7", "Home");
-		KeyMapping.keysTable.put("8", "End");
+		KeyMapping.keysTable.put("8", "BackSpace");
 		KeyMapping.keysTable.put("9", "Insert");
 		KeyMapping.keysTable.put("13", "Enter");
 		KeyMapping.keysTable.put("80", "Enter");

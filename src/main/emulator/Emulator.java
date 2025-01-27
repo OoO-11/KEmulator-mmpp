@@ -805,6 +805,16 @@ public class Emulator implements Runnable {
 				}
 			}
 		} catch (Exception ignored) {}
+
+		// skvm properties
+		System.setProperty("com.xce.wipi.version", "1.0.0");
+		System.setProperty("m.SK_VM", "20");
+		System.setProperty("m.VENDER", "LG");
+		System.setProperty("m.MODEL", "11");
+		System.setProperty("m.CARRIER", "SKT");
+		System.setProperty("m.COLOR", "5");
+		System.setProperty("m.MIN", "0000000000");
+		System.setProperty("MIN", "0000000000");
 	}
 
 	private static String getHWID() {

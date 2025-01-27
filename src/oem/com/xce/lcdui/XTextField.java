@@ -13,6 +13,8 @@ public class XTextField {
     private boolean focus;
     private int constraints;
 
+    private int x, y, width, height;
+
     public XTextField(String text, int maxSize, int constraints, Canvas canvas) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  init");
         if(text == null)
@@ -35,26 +37,36 @@ public class XTextField {
     public void keyPressed(int keyCode) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyPressed");
         // 키 입력 처리
+        throw new RuntimeException("Not implemented yet.");
     }
 
     public void keyReleased(int keyCode) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyReleased");
         // 키 릴리즈 처리
+        throw new RuntimeException("Not implemented yet.");
     }
 
     public void keyRepeated(int keyCode) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyRepeated");
         // 키 반복 처리
+        throw new RuntimeException("Not implemented yet.");
     }
 
     public void paint(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  paint");
         // Painting 처리
+        g.setColor(0xFFFFFFFF);
+        g.fillRect(x, y, width, height);
+        g.setColor(0xFF000000);
+        g.drawRect(x, y, width, height);
+
+        g.drawString(text, x + 1, y + 1, Graphics.LEFT | Graphics.TOP);
     }
 
     public void repaint() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  repaint");
         // Repainting 처리
+        throw new RuntimeException("Not implemented yet.");
     }
 
     public void setMaxSize(int maxSize) {
@@ -70,6 +82,10 @@ public class XTextField {
     public void setBounds(int x, int y, int width, int height) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  setBounds");
         // Bounds 설정
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
     public boolean hasFocus() {
@@ -85,5 +101,6 @@ public class XTextField {
     public void inputChar(char key) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  inputChar");
         // 문자 입력 처리
+        throw new RuntimeException("Not implemented yet.");
     }
 }

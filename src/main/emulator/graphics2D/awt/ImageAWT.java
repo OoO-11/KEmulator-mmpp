@@ -1,5 +1,6 @@
 package emulator.graphics2D.awt;
 
+import emulator.Emulator;
 import emulator.graphics2D.IGraphics2D;
 import emulator.graphics2D.IImage;
 import org.eclipse.swt.SWTException;
@@ -18,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static emulator.graphics2D.lbmdecoder.decodelbm;
+
 public final class ImageAWT implements IImage {
 	private BufferedImage img;
 	private Graphics2DAWT graphics;
@@ -27,7 +30,12 @@ public final class ImageAWT implements IImage {
 	public ImageAWT(final byte[] array) throws IOException {
 		super();
 		try {
-			img = emulator.graphics2D.c.toAwt(new ImageData(new ByteArrayInputStream(array)));
+			if(array.length > 4 && array[0] == 76 && array[1] == 66 && array[2] == 77 && array[3] == 80) {
+				img = decodelbm(array);
+			}
+			else {
+				img = emulator.graphics2D.c.toAwt(new ImageData(new ByteArrayInputStream(array)));
+			}
 		} catch (SWTException e) {
 			if (!("Invalid image".equals(e.getMessage())
 					|| "Unsupported or unrecognized format".equals(e.getMessage())))

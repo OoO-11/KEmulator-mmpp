@@ -5,6 +5,10 @@ import javax.microedition.lcdui.Image;
 
 import com.xce.lcdui.Toolkit;
 import emulator.Emulator;
+import emulator.graphics2D.IImage;
+import emulator.ui.IScreen;
+
+import java.awt.image.BufferedImage;
 
 public class Graphics2D {
     // Field constants
@@ -37,7 +41,8 @@ public class Graphics2D {
         if (mode < DRAW_AND || mode > DRAW_XOR) {
             throw new IllegalArgumentException("Invalid mode");
         }
-        Toolkit.graphics.drawImage(src, tx, ty, 20);
+//        Toolkit.graphics.drawImage(src, tx, ty, 20);
+        this.graphics.drawImage(src, tx, ty, 20);
         // Implement image drawing logic here
     }
 
@@ -79,8 +84,14 @@ public class Graphics2D {
     // Static method to capture LCD image
     public static Image captureLCD(int x, int y, int w, int h) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD");
-        // Implement LCD image capture logic here
-        return null; // Example return value
+
+        IScreen scr = Emulator.getEmulator().getScreen();
+        final IImage screenImage = scr.getScreenImg();
+        final IImage backBufferImage2 = scr.getBackBufferImage();
+        backBufferImage2.cloneImage(screenImage, x, y, w, h);
+
+        return convertToImage(screenImage);
+
     }
 
     // Static method to create a maskable image
@@ -88,5 +99,16 @@ public class Graphics2D {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] createMaskableImage");
         // Implement maskable image creation logic here
         return null; // Example return value
+    }
+
+    // Utility method to convert IImage to Image
+    private static Image convertToImage(IImage iImage) {
+        // Assuming IImage has a method to get the raw pixel data
+        int width = iImage.getWidth();
+        int height = iImage.getHeight();
+        int[] rgbData = new int[width * height];
+        iImage.getRGB(rgbData, 0, width, 0, 0, width, height);
+
+        return Image.createRGBImage(rgbData, width, height, false);
     }
 }
