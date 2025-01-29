@@ -19,9 +19,13 @@ public class MMFPlayer {
 //		}
 		try {
 			i.a("mmfplayer");
-			initMMFLibrary(Emulator.getAbsolutePath() + "/ma3smwemu.dll");
+			int result = initMMFLibrary(Emulator.getAbsolutePath() + "/ma3smwemu.dll");
+			System.out.println("mmf init "+result);
 			return MMFPlayer.initialized = true;
-		} catch (Throwable ignored) {}
+		} catch (Throwable e) {
+			System.err.println("Exception during MMFPlayer initialization:");
+			e.printStackTrace(); // 에러 내용을 출력해서 확인
+		}
 		return MMFPlayer.initialized = false;
 	}
 
@@ -32,6 +36,15 @@ public class MMFPlayer {
 			MMFPlayer.initialized = false;
 		}
 	}
+
+	public static void playSafe(final int p0, final int p1) {
+		if (!initialized) {
+			System.err.println("MMFPlayer is not initialized! play() aborted.");
+			return;
+		}
+		play(p0, p1);
+	}
+
 
 	public static native int initMMFLibrary(final String p0);
 
