@@ -266,23 +266,23 @@ public abstract class Canvas extends Displayable {
 				break;
 			}
 			default: {
-				if (n == KeyMapping.getArrowKeyFromDevice(UP) || n == 50) {
+				if (n == KeyMapping.getArrowKeyFromDevice(UP) || n == 50 || n == KEY_UP) {
 					n3 = 1;
 					break;
 				}
-				if (n == KeyMapping.getArrowKeyFromDevice(DOWN) || n == 56) {
+				if (n == KeyMapping.getArrowKeyFromDevice(DOWN) || n == 56 || n == KEY_DOWN) {
 					n3 = 6;
 					break;
 				}
-				if (n == KeyMapping.getArrowKeyFromDevice(LEFT) || n == 52) {
+				if (n == KeyMapping.getArrowKeyFromDevice(LEFT) || n == 52 || n == KEY_LEFT) {
 					n3 = 2;
 					break;
 				}
-				if (n == KeyMapping.getArrowKeyFromDevice(RIGHT) || n == 54) {
+				if (n == KeyMapping.getArrowKeyFromDevice(RIGHT) || n == 54 || n == KEY_RIGHT) {
 					n3 = 5;
 					break;
 				}
-				if (n == KeyMapping.getArrowKeyFromDevice(FIRE) || n == 53) {
+				if (n == KeyMapping.getArrowKeyFromDevice(FIRE) || n == 53 || n == KEY_FIRE) {
 					n3 = 8;
 					break;
 				}

@@ -108,6 +108,8 @@ public final class KeyMapping {
 		KeyMapping.strToPCKey.put("MIDDLE", String.valueOf(mid));
 		KeyMapping.strToPCKey.put("S1", String.valueOf(s1));
 		KeyMapping.strToPCKey.put("S2", String.valueOf(s2));
+
+		// skvm keymapping
 		if(Emulator.zipPath != null){
 			KeyMapping.strToPCKey.put("CLR", "8");
 		}
@@ -238,7 +240,7 @@ public final class KeyMapping {
 		}
 		final Object value;
 		if ((value = KeyMapping.deviceKeyToStr.get(String.valueOf(n))) != null) {
-//			System.out.println("[KeyMapping.replaceKey] string n : " + String.valueOf(n));
+//			System.out.println("[KeyMapping.replaceKey] if2 string n : " + String.valueOf(n));
 //			System.out.println("[KeyMapping.replaceKey] here value : " + value);
 //			System.out.println("[KeyMapping.replaceKey] here strToPCKey : " + KeyMapping.strToPCKey.get(value));
 			return (String) KeyMapping.strToPCKey.get(value);

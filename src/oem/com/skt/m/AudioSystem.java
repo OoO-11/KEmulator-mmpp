@@ -58,6 +58,7 @@ public final class AudioSystem {
 
     // Helper method to check if the format is supported
     private static boolean isSupportedFormat(String format) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.AudioSystem] isSupportedFormat");
         String[] supportedFormats = getClipFormats();
         for (String supportedFormat : supportedFormats) {
             if (supportedFormat.equals(format)) {

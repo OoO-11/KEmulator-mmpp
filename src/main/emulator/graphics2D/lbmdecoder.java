@@ -22,28 +22,28 @@ public class lbmdecoder {
 
         // Type 읽기 (4바이트)
         int type = buffer.getInt();
-        System.out.println("Type: " + type);
+//        System.out.println("Type: " + type);
 
         // Width 읽기 (4바이트)
         int width = buffer.getInt();
-        System.out.println("Width: " + width);
+//        System.out.println("Width: " + width);
 
         // Height 읽기 (4바이트)
         int height = buffer.getInt();
-        System.out.println("Height: " + height);
+//        System.out.println("Height: " + height);
 
         // Size 읽기 (4바이트)
         int size = buffer.getInt();
-        System.out.println("Size: " + size);
+//        System.out.println("Size: " + size);
 
         // Mask 읽기 (4바이트)
         int mask = buffer.getInt();
-        System.out.println("Mask: " + mask);
+//        System.out.println("Mask: " + mask);
 
         // Data 읽기 (size만큼)
         byte[] data = new byte[size];
         buffer.get(data);
-        System.out.println("Data length: " + data.length);
+//        System.out.println("Data length: " + data.length);
 
 
         assert (width * height == size) : "now only support type 8";

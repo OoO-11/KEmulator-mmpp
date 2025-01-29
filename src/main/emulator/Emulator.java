@@ -437,6 +437,9 @@ public class Emulator implements Runnable {
 			if (fis.read(buffer) != buffer.length) {
 				throw new IOException("Failed to read first 32 bytes.");
 			}
+			if (buffer[0] == 'P' && buffer[1] == 'K') {
+				fis.getChannel().position(0);
+			}
 			// 원본 파일 경로를 기반으로 새로운 파일 이름 생성
 			File originalFile = new File(Emulator.midletJar);
 			String newFileName = originalFile.getName().replace(".jar", "_ca.jar");

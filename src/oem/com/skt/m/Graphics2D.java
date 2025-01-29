@@ -3,7 +3,6 @@ package com.skt.m;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import com.xce.lcdui.Toolkit;
 import emulator.Emulator;
 import emulator.graphics2D.IImage;
 import emulator.ui.IScreen;
@@ -17,7 +16,7 @@ public class Graphics2D {
     public static final int DRAW_OR = 2;
     public static final int DRAW_XOR = 3;
 
-    private Graphics graphics;
+    private final Graphics graphics;
 
     // Method to get Graphics2D object
     public static Graphics2D getGraphics2D(Graphics g) {
@@ -29,7 +28,21 @@ public class Graphics2D {
     }
 
     private Graphics2D(Graphics g) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] Graphics2D");
         this.graphics = g;
+    }
+
+    // Static method to capture LCD image
+    public static Image captureLCD(int x, int y, int w, int h) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD");
+
+        IScreen scr = Emulator.getEmulator().getScreen();
+        final IImage screenImage = scr.getScreenImg();
+        final IImage backBufferImage2 = scr.getBackBufferImage();
+        backBufferImage2.cloneImage(screenImage, x, y, w, h);
+
+        return convertToImage(screenImage);
+
     }
 
     // Method to draw an image
@@ -41,9 +54,29 @@ public class Graphics2D {
         if (mode < DRAW_AND || mode > DRAW_XOR) {
             throw new IllegalArgumentException("Invalid mode");
         }
-//        Toolkit.graphics.drawImage(src, tx, ty, 20);
-        this.graphics.drawImage(src, tx, ty, 20);
-        // Implement image drawing logic here
+
+        // 새로운 이미지 생성 (잘라낼 부분을 포함)
+        Image subImage = Image.createImage(src, sx, sy, sw, sh, 0);
+
+        // 모드에 따라 위치 조정
+        int dx = tx;
+        int dy = ty;
+
+        if ((mode & Graphics.BOTTOM) != 0) {
+            dy -= sh;
+        }
+        if ((mode & Graphics.RIGHT) != 0) {
+            dx -= sw;
+        }
+        if ((mode & Graphics.HCENTER) != 0) {
+            dx -= sw / 2;
+        }
+        if ((mode & Graphics.VCENTER) != 0) {
+            dy -= sh / 2;
+        }
+
+        // 그래픽 객체에 그리기
+        graphics.drawImage(subImage, dx, dy, Graphics.TOP | Graphics.LEFT);
     }
 
     // Method to invert a rectangle
@@ -79,19 +112,6 @@ public class Graphics2D {
     public void setPixelMask(int x, int y, boolean mask) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] setPixelMask");
         // Implement pixel mask setting logic here
-    }
-
-    // Static method to capture LCD image
-    public static Image captureLCD(int x, int y, int w, int h) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD");
-
-        IScreen scr = Emulator.getEmulator().getScreen();
-        final IImage screenImage = scr.getScreenImg();
-        final IImage backBufferImage2 = scr.getBackBufferImage();
-        backBufferImage2.cloneImage(screenImage, x, y, w, h);
-
-        return convertToImage(screenImage);
-
     }
 
     // Static method to create a maskable image

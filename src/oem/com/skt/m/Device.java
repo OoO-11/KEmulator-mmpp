@@ -18,6 +18,7 @@ public class Device {
     // Methods
     public static void beep(int freq, int duration) {
         // 간단한 비프음을 낸다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  beep");
     }
 
     public static void enableRestoreLCD(boolean flag) {
@@ -32,6 +33,8 @@ public class Device {
 
     public static boolean isBacklightEnabled() {
         // 키가 눌려질 때의 백라이트 설정을 리턴한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  isBacklightEnabled");
+
         return true;
     }
 
@@ -43,6 +46,7 @@ public class Device {
 
     public static void setBacklightEnabled(boolean flag) {
         // 키가 눌려질 때 백라이트가 자동으로 켜지는 기능을 설정한다.
+        Emulator.getEmulator().getLogStream().println("[skt.m.Device]  setBacklightEnabled");
     }
 
     public static void setColorMode(int mode) {

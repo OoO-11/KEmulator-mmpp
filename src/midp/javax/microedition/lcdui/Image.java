@@ -29,6 +29,10 @@ public class Image {
 		++Profiler.totalImageInstances;
 	}
 
+	public Image(){
+		super();
+	}
+
 	static org.eclipse.swt.graphics.Image getSWTImage(Image img) {
 		// TODO
 		if (img == null) return null;
