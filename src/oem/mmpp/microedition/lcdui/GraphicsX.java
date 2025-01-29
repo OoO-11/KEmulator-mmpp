@@ -67,7 +67,7 @@ public class GraphicsX extends Graphics {
     }
 
     public void setAlpha(int alpha) {
-        Emulator.getEmulator().getLogStream().println("[mmpp] setAlpha");
+        Emulator.getEmulator().getLogStream().println("[mmpp] setAlpha"+alpha);
         if(alpha < 0 || alpha > 256){
             throw new IllegalArgumentException("alpha should be 0~256.");
         }

@@ -30,7 +30,7 @@ public abstract class Item {
 	static final int anInt24 = 32563;
 	static final Font font = Font.getFont(0, 1, 8);
 	int[] bounds;
-	boolean focused;
+	protected boolean focused;
 	boolean shownOnForm;
 	Command defaultCommand;
 	public ItemCommandListener itemCommandListener;
