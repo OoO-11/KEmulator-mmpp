@@ -65,6 +65,11 @@ public class MediaPlayer {
 		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, offset, length);
 	}
 
+	public void setMediaSource(byte[] buffer) {
+		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaSource");
+		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, 0, buffer.length);
+	}
+
 	public void setVolumeLevel(String level) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setVolumeLevel to " + level);
 		if(audio == null)
