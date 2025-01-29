@@ -120,7 +120,7 @@ public class AudioClip {
 			this.volume = v;
 			if (this.mmfInit) {
 				MMFPlayer.initPlayer(this.data);
-				MMFPlayer.play(l, v);
+				MMFPlayer.playSafe(l, v);
 				this.status = STATUS_PLAY;
 				return;
 			}
