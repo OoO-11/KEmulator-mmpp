@@ -9,10 +9,13 @@ import emulator.ui.IScreen;
 
 public class Graphics2D {
     // Field constants
-    public static final int DRAW_AND = 3;
+    public static final int DRAW_AND = 0;
     public static final int DRAW_COPY = 1;
-    public static final int DRAW_OR = 0;
-    public static final int DRAW_XOR = 2;//3은아님
+    public static final int DRAW_OR = 2;
+    public static final int DRAW_XOR = 3;
+
+     // 2가 OR일때 초성이 안보임
+    //
 
     private static Graphics graphics;
     private static Image image;

@@ -578,6 +578,17 @@ public class Graphics
 			xrayGraphics.reset();
 	}
 
+	public void reset() {
+		setColor(0);
+		setFont(Font.getDefaultFont());
+		setStrokeStyle(SOLID);
+		translate(-tx, -ty);
+		ty = tx = 0;
+		impl.reset();
+		if (xrayGraphics != null)
+			xrayGraphics.reset();
+	}
+
 	public synchronized void drawFigure(com.vodafone.v10.graphics.j3d.Figure figure,
 										int x, int y,
 										com.vodafone.v10.graphics.j3d.FigureLayout layout,

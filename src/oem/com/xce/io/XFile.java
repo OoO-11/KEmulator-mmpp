@@ -97,24 +97,33 @@ public class XFile {
     }
 
     public static void mkdir(String dirname) throws IOException {
-        Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  mkdir");
+        Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  mkdir "+ dirname);
+        File directory = new File(Emulator.zipPath, dirname);
+        if (!directory.exists()) {
+            boolean result = directory.mkdir(); // 디렉토리 생성
+        } else {
+            System.out.println("디렉토리가 이미 존재합니다.");
+        }
         // Implementation to create a directory
     }
 
     public static void rmrdir(String dirname) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  rmrdir");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to remove a directory and its contents
     }
 
     public static void rmdir(String dirname) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  rmdir");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to remove a directory
     }
 
     public String readdir() throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  readdir");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to read a directory
-        return null;
+//        return null;
     }
 
     public int write(byte[] b, int off, int len) throws IOException {
@@ -125,13 +134,15 @@ public class XFile {
 
     public void flush() throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  flush");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to flush the file
     }
 
     public int seek(int n, int whence) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  seek");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to seek to a specific position in the file
-        return 0;
+//        return 0;
     }
 
     public static boolean exists(String name) throws IOException {
@@ -142,20 +153,23 @@ public class XFile {
 
     public static int filesize(String name) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  filesize");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to get the size of a file
-        return 0;
+//        return 0;
     }
 
     public static int unlink(String name) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  unlink");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to delete a file
-        return 0;
+//        return 0;
     }
 
     public static int fsused() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  fsused");
+        throw new RuntimeException("Not implemented yet.");
         // Implementation to get the used file system space
-        return 0;
+//        return 0;
     }
 
     public static int fsavail() {
