@@ -1859,8 +1859,8 @@ public final class EmulatorScreen implements
 			return;
 		}
 		String r = mapKey(n);
-		System.out.println("[EmulatorScreen.handleKeyPress] press event / keycode = " + n);
-        System.out.println("[EmulatorScreen.handleKeyPress] mapkey string r : "+ r);
+//		System.out.println("[EmulatorScreen.handleKeyPress] press event / keycode = " + n);
+//        System.out.println("[EmulatorScreen.handleKeyPress] mapkey string r : "+ r);
 		if (r == null) return;
 		n = Integer.parseInt(r);
 		if (pressedKeys.contains(n)) {
