@@ -818,6 +818,7 @@ public class Emulator implements Runnable {
 		System.setProperty("m.COLOR", "5");
 		System.setProperty("m.MIN", "0000000000");
 		System.setProperty("MIN", "0000000000");
+		System.setProperty("m.TYPE", "SKVM");
 	}
 
 	private static String getHWID() {

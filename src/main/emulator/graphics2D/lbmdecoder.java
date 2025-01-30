@@ -51,7 +51,7 @@ public class lbmdecoder {
         // 마스크 읽기 (옵션)
         byte[] maskPlane = null;
         if (mask == 1) {
-            int maskPlaneSize = (height + 7) / 8;; // 비트 단위 마스크 크기
+            int maskPlaneSize = (height + 7) / 8;; // 마스크 크기
             maskPlane = new byte[maskPlaneSize*width];
             buffer.get(maskPlane);
         }

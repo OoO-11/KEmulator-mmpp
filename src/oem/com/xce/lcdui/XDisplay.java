@@ -26,4 +26,20 @@ public class XDisplay {
         Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] drawImageEx");
         Graphics2D.getGraphics2D(gfx).drawImage(tx, ty, srcImage, sx, sy, sw, sh, mode);
     }
+
+    // TODO : is this right?
+    public static void clear(Graphics g, Image i, int x, int y){
+        if(g == null){
+            System.out.println("g null");
+        }
+        if(i == null){
+            g.setColor(0xFFFFFF); // 흰색으로 설정
+            g.fillRect(x, y, g.getImage().getWidth(), g.getImage().getHeight());
+        }
+        else{
+            g.setColor(0xFFFFFF); // 흰색으로 설정
+            g.fillRect(x, y, i.getWidth(), i.getHeight());
+        }
+
+    }
 }
