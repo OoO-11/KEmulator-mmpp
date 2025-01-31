@@ -19,6 +19,7 @@ public class Graphics2D {
 
     private static Graphics graphics;
     private static Image image;
+    private static boolean[][] pixelMask;
 
     // Method to get Graphics2D object
     public static Graphics2D getGraphics2D(Graphics g) {
@@ -136,24 +137,37 @@ public class Graphics2D {
     // Method to get a pixel mask
     public boolean getPixelMask(int x, int y) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] getPixelMask");
-        // Implement pixel mask retrieval logic here
-        throw new RuntimeException("Not implemented yet.");
-//        return false; // Example return value
+        if (x < 0 || x >= pixelMask.length || y < 0 || y >= pixelMask[0].length) {
+            throw new IllegalArgumentException("Coordinates out of bounds");
+        }
+        return pixelMask[x][y];
     }
 
     // Method to set a pixel mask
     public void setPixelMask(int x, int y, boolean mask) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] setPixelMask");
-        throw new RuntimeException("Not implemented yet.");
+        if (x < 0 || x >= pixelMask.length || y < 0 || y >= pixelMask[0].length) {
+            throw new IllegalArgumentException("Coordinates out of bounds");
+        }
+        pixelMask[x][y] = mask;
         // Implement pixel mask setting logic here
     }
 
     // Static method to create a maskable image
     public static Image createMaskableImage(int width, int height) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] createMaskableImage");
-        // Implement maskable image creation logic here
-        throw new RuntimeException("Not implemented yet.");
-//        return null; // Example return value
+
+        // 새로운 이미지 생성
+        Image maskableImage = Image.createImage(width, height);
+        Graphics g = maskableImage.getGraphics();
+        pixelMask = new boolean[width][height];
+
+        // 초기화 작업 (필요에 따라 추가 작업 가능)
+//        g.setColor(0x000000); // 검은색으로 초기화
+//        g.fillRect(0, 0, width, height);
+        // white by default?
+
+        return maskableImage;
     }
 
     // Utility method to convert IImage to Image
