@@ -23,11 +23,15 @@ You can find implemented APIs at
 /KEmulator/src/oem/xce
 ```
 Here is docs For mmpp and sk-vm
+
 https://nikita36078.github.io/J2ME_Docs/docs/LG_MMPP_API/
 
 https://web.archive.org/web/20030617131851/http://developer.xce.co.kr/KOREAN/API/sktapi/overview-summary.html
 
 
+
 ## 4. Thanks
+This project includes code licensed under the Mozilla Public License 2.0 (MPL-2.0).
+See the LICENSE file for details.
 
 I referred to https://github.com/usernameak/sktemu to get info about LBM file format and Keycodes, and other details. It helped me a lot. Thanks!

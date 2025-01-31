@@ -40,8 +40,7 @@ public class FileInputStream extends InputStream{
 
     public void close() throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  close");
-        throw new RuntimeException("Not implemented yet.");
-        // Implementation to close the file
+        file.close();
     }
 
     public void mark(int readlimit) {
@@ -58,20 +57,18 @@ public class FileInputStream extends InputStream{
 
     public int read() throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  read");
-        // Implementation to read a byte
-        throw new RuntimeException("Not implemented yet.");
-//        return 0;
+        byte[] b = new byte[1];
+        return this.file.read(b,0,1);
     }
 
     public int read(byte[] b) throws IOException {
-        Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  read");
+        Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  read2");
         return read(b, 0, b.length);
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
-        Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  read");
-        // Implementation to read from file to b with length len
-        throw new RuntimeException("Not implemented yet.");
+        Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  read3");
+        return this.file.read(b,off,len);
     }
 
     public void reset() throws IOException {
@@ -81,8 +78,9 @@ public class FileInputStream extends InputStream{
     }
 
     public long skip(long n) throws IOException {
-        Emulator.getEmulator().getLogStream().println("[xce.io.FileInputStream]  skip");
-        // Implementation to skip n bytes from file
-        throw new RuntimeException("Not implemented yet.");
+        if (n > Integer.MAX_VALUE) {
+            throw new IOException("cannot skip that far");
+        }
+        return file.seek((int) n, XFile.SEEK_CUR);
     }
 }

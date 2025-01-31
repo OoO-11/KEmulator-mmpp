@@ -60,6 +60,7 @@ public class XFile {
     public XFile(String jarfile, String name) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  init : " + jarfile+" "+name);
         this.file = new File(Emulator.zipPath, jarfile);
+        this.type = FILE_JAR;
 
         final ZipEntry entry;
         if ((entry = (this.zipFile = new ZipFile(file)).getEntry(name)) == null) {
@@ -134,15 +135,20 @@ public class XFile {
 
     public void flush() throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  flush");
-        throw new RuntimeException("Not implemented yet.");
+//        throw new RuntimeException("Not implemented yet.");
         // Implementation to flush the file
     }
 
     public int seek(int n, int whence) throws IOException {
-        Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  seek");
-        throw new RuntimeException("Not implemented yet.");
-        // Implementation to seek to a specific position in the file
-//        return 0;
+        Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  seek " + n + " whence "+whence);
+        if (whence == SEEK_SET) {
+            raf.seek(n);
+        } else if (whence == SEEK_CUR) {
+            raf.seek(raf.getFilePointer() + n);
+        } else if (whence == SEEK_END) {
+            raf.seek(raf.length() - n);
+        }
+        return 0;
     }
 
     public static boolean exists(String name) throws IOException {

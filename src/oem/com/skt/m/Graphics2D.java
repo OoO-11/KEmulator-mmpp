@@ -41,7 +41,6 @@ public class Graphics2D {
     // Static method to capture LCD image
     public static Image captureLCD(int x, int y, int w, int h) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD");
-
         return Image.createImage(image, x, y, w, h, 0);
     }
 
