@@ -4,6 +4,7 @@ import club.minnced.discord.rpc.DiscordEventHandlers;
 import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import com.github.sarxos.webcam.Webcam;
+import com.skt.m.SecureUtil;
 import emulator.custom.CustomClassLoader;
 import emulator.custom.CustomMethod;
 import emulator.graphics3D.IGraphics3D;
@@ -427,6 +428,12 @@ public class Emulator implements Runnable {
 				final String s = (String) keys.nextElement();
 				props.put(s, props.getProperty(s));
 			}
+			String var2 = props.getProperty("MIDlet-Jar-URL");
+			int var3 = var2.indexOf("SERVICE_ID=");
+			String var4 = var2.substring(var3 + 16, var3 + 26);
+//			System.out.println(SecureUtil.a());?
+			System.out.println("key gen"+SecureUtil.isValid("01100000000",var4));
+			props.put("MIDlet-Key", SecureUtil.isValid("01100000000",var4));
 			break;
 		}
 
