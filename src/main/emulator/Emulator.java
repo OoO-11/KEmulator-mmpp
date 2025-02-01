@@ -431,9 +431,13 @@ public class Emulator implements Runnable {
 			String var2 = props.getProperty("MIDlet-Jar-URL");
 			int var3 = var2.indexOf("SERVICE_ID=");
 			String var4 = var2.substring(var3 + 16, var3 + 26);
-//			System.out.println(SecureUtil.a());?
-			System.out.println("key gen"+SecureUtil.isValid("01100000000",var4));
+
+//			System.out.println("MIDLET-1 "+props.getProperty("MIDlet-1").trim());
 			props.put("MIDlet-Key", SecureUtil.isValid("01100000000",var4));
+			props.put("MIDlet-Key2", SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
+//			props.put("MIDlet-Key2", SecureUtill2.b(var2, props.getProperty("MIDlet-1").trim()));
+//			System.out.println(SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
+//			System.out.println(SecureUtill2.b("01100000000", props.getProperty("MIDlet-1").trim(), var2));
 			break;
 		}
 

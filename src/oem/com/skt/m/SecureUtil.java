@@ -23,6 +23,18 @@ public class SecureUtil {
 //        return var5.equals(var9);
     }
 
+    public static String isValid(String var1, String var4, String var5) {
+        SecureUtil var6 = new SecureUtil();
+        byte[] var7 = (var1 + var4 + "a0a535ef35b" + var5).getBytes();
+        var6.b(var7, 0, var7.length);
+        byte[] var8 = new byte[16];
+        var6.a(var8);
+        String var9 = var6.b(var8);
+        Object var10 = null;
+        return var9;
+//        return var5.equals(var9);
+    }
+
     private String b(byte[] var1) {
         StringBuffer var3 = new StringBuffer();
 
