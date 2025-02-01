@@ -11,7 +11,7 @@ public class XDisplay {
     public static int height2 = Emulator.getEmulator().getScreen().getBackBufferImage().getHeight();
 
     public static void refresh(int x, int y, int width, int height) {
-        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] refresh");
+//        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] refresh");
         Emulator.getEventQueue().gameGraphicsFlush(x,y,width,height);
 //        Emulator.getEventQueue().queueRepaint(x,y,width,height);
     }

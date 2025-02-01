@@ -32,6 +32,6 @@ https://web.archive.org/web/20030617131851/http://developer.xce.co.kr/KOREAN/API
 
 ## 4. Thanks
 This project includes code licensed under the Mozilla Public License 2.0 (MPL-2.0).
-See the LICENSE file for details.
+See the LICENSE for details.
 
 I referred to https://github.com/usernameak/sktemu to get info about LBM file format and Keycodes, and other details. It helped me a lot. Thanks!

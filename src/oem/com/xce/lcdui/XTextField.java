@@ -1,3 +1,6 @@
+/*
+original code from https://github.com/usernameak/sktemu
+ */
 package com.xce.lcdui;
 
 import javax.microedition.lcdui.TextField;
@@ -35,15 +38,16 @@ public class XTextField {
     }
 
     public void keyPressed(int keyCode) {
-        Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyPressed");
+        Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyPressed "+keyCode);
         // 키 입력 처리
-        throw new RuntimeException("Not implemented yet.");
+        inputChar('a');
+//        throw new RuntimeException("Not implemented yet.");
     }
 
     public void keyReleased(int keyCode) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyReleased");
         // 키 릴리즈 처리
-        throw new RuntimeException("Not implemented yet.");
+//        throw new RuntimeException("Not implemented yet.");
     }
 
     public void keyRepeated(int keyCode) {
@@ -66,7 +70,7 @@ public class XTextField {
     public void repaint() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  repaint");
         // Repainting 처리
-        throw new RuntimeException("Not implemented yet.");
+//        throw new RuntimeException("Not implemented yet.");
     }
 
     public void setMaxSize(int maxSize) {
@@ -99,8 +103,18 @@ public class XTextField {
     }
 
     public void inputChar(char key) {
-        Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  inputChar");
-        // 문자 입력 처리
-        throw new RuntimeException("Not implemented yet.");
+        Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  inputChar " + key);
+        if(!focus){
+            return;
+        }
+        if(key == 8){
+            if(!text.isEmpty()){
+                text = text.substring(0, text.length()-1);
+            }
+            else if(text.length() < maxSize){
+                text += key;
+            }
+        }
+//        repaint();
     }
 }

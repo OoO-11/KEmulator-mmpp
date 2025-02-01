@@ -7,7 +7,7 @@ import java.nio.ByteOrder;
 
 public class lbmdecoder {
     public static BufferedImage decodelbm(byte[] array) {
-        System.out.println("lbm image");
+//        System.out.println("lbm image");
 
         // ByteBuffer 생성 (Little Endian)
         ByteBuffer buffer = ByteBuffer.wrap(array).order(ByteOrder.LITTLE_ENDIAN);
