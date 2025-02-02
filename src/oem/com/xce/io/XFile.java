@@ -5,6 +5,7 @@ import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
 
 import java.io.*;
+import java.util.Enumeration;
 
 public class XFile {
     public static final int STDSTREAM = 0;
@@ -63,6 +64,10 @@ public class XFile {
         this.type = FILE_JAR;
 
         final ZipEntry entry;
+
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
         if ((entry = (this.zipFile = new ZipFile(file)).getEntry(name)) == null) {
             throw new IOException();
         }
@@ -159,9 +164,12 @@ public class XFile {
 
     public static int filesize(String name) throws IOException {
         Emulator.getEmulator().getLogStream().println("[xce.io.XFile]  filesize");
-        throw new RuntimeException("Not implemented yet.");
-        // Implementation to get the size of a file
-//        return 0;
+        File file = new File(Emulator.zipPath, name);
+        if (!file.exists()) {
+            throw new IOException("File not found: " + name);
+        }
+
+        return (int) file.length();
     }
 
     public static int unlink(String name) throws IOException {

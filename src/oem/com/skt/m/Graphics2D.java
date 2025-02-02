@@ -79,6 +79,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] & srcPixels[y*sw + x];
                     }
                 }
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
                 break;
             case DRAW_OR:
                 for (int x = 0; x < sw; x++) {
@@ -86,6 +87,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] | srcPixels[y*sw + x];
                     }
                 }
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
                 break;
             case DRAW_XOR:
                 for (int x = 0; x < sw; x++) {
@@ -93,9 +95,9 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] ^ srcPixels[y*sw + x];
                     }
                 }
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
                 break;
         }
-        Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
     }
 
     // Method to invert a rectangle

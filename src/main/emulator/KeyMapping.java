@@ -116,11 +116,21 @@ public final class KeyMapping {
 		else{
 			KeyMapping.strToPCKey.put("CLR", "-8");
 		}
+
+		KeyMapping.strToPCKey.put("KEY_COML", "129");
+		KeyMapping.strToPCKey.put("KEY_COMC", "130");
+		KeyMapping.strToPCKey.put("KEY_COMR", "131");
 		KeyMapping.strToPCKey.put("KEY_UP", "141");
 		KeyMapping.strToPCKey.put("KEY_DOWN", "146");
 		KeyMapping.strToPCKey.put("KEY_LEFT", "142");
 		KeyMapping.strToPCKey.put("KEY_RIGHT", "145");
 		KeyMapping.strToPCKey.put("KEY_FIRE", "148");
+		KeyMapping.strToPCKey.put("KEY_CALL", "190");
+		KeyMapping.strToPCKey.put("KEY_END", "191");
+		KeyMapping.strToPCKey.put("KEY_FLIP_OPEN", "192");
+		KeyMapping.strToPCKey.put("KEY_FLIP_CLOSE", "193");
+		KeyMapping.strToPCKey.put("KEY_VOL_UP", "194");
+		KeyMapping.strToPCKey.put("KEY_VOL_DOWN", "195");
 	}
 
 	private static void method606() {

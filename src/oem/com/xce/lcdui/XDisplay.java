@@ -29,6 +29,7 @@ public class XDisplay {
 
     // TODO : is this right?
     public static void clear(Graphics g, Image i, int x, int y){
+        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] clear");
         if(g == null){
             System.out.println("g null");
         }
@@ -40,6 +41,11 @@ public class XDisplay {
             g.setColor(0xFFFFFF); // 흰색으로 설정
             g.fillRect(x, y, i.getWidth(), i.getHeight());
         }
+    }
 
+    // TODO : is this right?
+    public static void copyLCD(Graphics g, Image i, int x, int y, int w, int h){
+        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] copyLCD");
+//        g.drawImage(Image.createImage(i, x, y, w, h, 0),0,0,0);
     }
 }

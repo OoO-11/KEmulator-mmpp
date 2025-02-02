@@ -184,6 +184,7 @@ public class SecureUtil {
     }
 
     private void a(int[] var1, int var2, int var3) {
+
         this.a((int[])var1, (int)0, var2, var3);
     }
 
@@ -197,6 +198,7 @@ public class SecureUtil {
     }
 
     private void c(byte[] var1, int var2, int var3) {
+
         this.a((byte[])var1, (byte)0, var2, var3);
     }
 

@@ -5,6 +5,7 @@ import club.minnced.discord.rpc.DiscordRPC;
 import club.minnced.discord.rpc.DiscordRichPresence;
 import com.github.sarxos.webcam.Webcam;
 import com.skt.m.SecureUtil;
+import com.skt.m.SecureUtill2;
 import emulator.custom.CustomClassLoader;
 import emulator.custom.CustomMethod;
 import emulator.graphics3D.IGraphics3D;
@@ -428,16 +429,18 @@ public class Emulator implements Runnable {
 				final String s = (String) keys.nextElement();
 				props.put(s, props.getProperty(s));
 			}
+
 			String var2 = props.getProperty("MIDlet-Jar-URL");
 			int var3 = var2.indexOf("SERVICE_ID=");
-			String var4 = var2.substring(var3 + 16, var3 + 26);
+			String var4="";
+			if(var3 != -1) {
+				var4 = var2.substring(var3 + 16, var3 + 26);
+				props.put("MIDlet-Key", SecureUtil.isValid("01100000000",var4));
+				props.put("MIDlet-Key2", SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
+//				props.put("MIDlet-Key3", SecureUtill2.isValid("00000000",var4, props.getProperty("MIDlet-1").trim()));
+				props.put("MIDlet-Key4", SecureUtill2.isValid("00000000",var4, props.getProperty("MIDlet-1").trim()));
+			}
 
-//			System.out.println("MIDLET-1 "+props.getProperty("MIDlet-1").trim());
-			props.put("MIDlet-Key", SecureUtil.isValid("01100000000",var4));
-			props.put("MIDlet-Key2", SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
-//			props.put("MIDlet-Key2", SecureUtill2.b(var2, props.getProperty("MIDlet-1").trim()));
-//			System.out.println(SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
-//			System.out.println(SecureUtill2.b("01100000000", props.getProperty("MIDlet-1").trim(), var2));
 			break;
 		}
 
@@ -829,7 +832,9 @@ public class Emulator implements Runnable {
 		System.setProperty("m.COLOR", "5");
 		System.setProperty("m.MIN", "0000000000");
 		System.setProperty("MIN", "0000000000");
-		System.setProperty("m.TYPE", "SKVM");
+		System.setProperty("m.TYPE", "???");
+		System.setProperty("m.EXT_SW", "???");
+
 	}
 
 	private static String getHWID() {
