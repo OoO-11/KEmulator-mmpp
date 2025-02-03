@@ -14,6 +14,9 @@ Based on https://github.com/shinovon/KEmulator
 
 IntelliJ IDEA, JDK1.8
 
+* To run ez-java application, only jar file is needed(TBU)
+* To run sk-vm application, select .zip file.
+
 ## 3. Contribution
 
 You can find implemented APIs at
@@ -32,6 +35,5 @@ https://web.archive.org/web/20030617131851/http://developer.xce.co.kr/KOREAN/API
 
 ## 4. Thanks
 This project includes code licensed under the Mozilla Public License 2.0 (MPL-2.0).
-See the LICENSE for details.
 
 I referred to https://github.com/usernameak/sktemu to get info about LBM file format and Keycodes, and other details. It helped me a lot. Thanks!
