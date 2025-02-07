@@ -1,12 +1,11 @@
 package com.skt.m;
 
 import emulator.Emulator;
-import emulator.media.MMFPlayer;
-//import com.samsung.util.AudioClip;
 
 public class AudioClipImpl implements AudioClip {
 
     com.samsung.util.AudioClip AC;
+    private final Object startLock = new Object();
 
     @Override
     public void close() throws java.io.IOException {
@@ -18,10 +17,12 @@ public class AudioClipImpl implements AudioClip {
     @Override
     public void loop() throws UserStopException, java.io.IOException {
         Emulator.getEmulator().getLogStream().println("[skt.m.AudioClipImpl] loop");
-        if(AC==null){
-            return;
+        synchronized (startLock) {
+            if (AC == null) {
+                return;
+            }
+            AC.play(255, 3);
         }
-        AC.play(255,3);
         // 무한 반복 연주 로직
     }
 
@@ -45,10 +46,12 @@ public class AudioClipImpl implements AudioClip {
     @Override
     public void play() throws UserStopException, java.io.IOException {
         Emulator.getEmulator().getLogStream().println("[skt.m.AudioClipImpl] play");
-        if(AC==null){
-            return;
+        synchronized (startLock) {
+            if (AC == null) {
+                return;
+            }
+            AC.play(1, 3);
         }
-        AC.play(1,3);
         // 연주 시작 로직
     }
 
@@ -65,10 +68,12 @@ public class AudioClipImpl implements AudioClip {
     @Override
     public void stop() throws java.io.IOException {
         Emulator.getEmulator().getLogStream().println("[skt.m.AudioClipImpl] stop");
-        if(AC==null){
-            return;
+        synchronized (startLock) {
+            if (AC == null) {
+                return;
+            }
+            AC.stop();
         }
-        AC.stop();
         // 연주 멈춤 로직
     }
 }

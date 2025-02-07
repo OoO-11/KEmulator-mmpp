@@ -34,6 +34,7 @@ public class MediaPlayer {
 	private boolean loop;
 	private String currentVolume = String.valueOf(MAX_VOLUME);
 	private static final int MAX_VOLUME = 5;
+	private final Object startLock = new Object();
 
 	public void setMediaLocation(String location) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaLocation to " + location);
@@ -90,10 +91,12 @@ public class MediaPlayer {
 //		} catch (MediaException e) {
 //			e.printStackTrace();
 //		}
-		Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
-		if(audio == null)
-			return;
-		audio.play(1, Integer.parseInt(currentVolume));
+		synchronized (startLock) {
+			Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
+			if (audio == null)
+				return;
+			audio.play(1, Integer.parseInt(currentVolume));
+		}
 	}
 
 	public void pause() {
