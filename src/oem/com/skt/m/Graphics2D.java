@@ -52,7 +52,8 @@ public class Graphics2D {
     // Method to draw an image
     public void drawImage(int tx, int ty, Image src, int sx, int sy, int sw, int sh, int mode) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] drawImage "+mode);
-//        System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
+        System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
+        System.out.printf("src width %d height %d \n", src.getWidth(), src.getHeight());
 
         if (src == null) {
             throw new NullPointerException("Source image cannot be null");
@@ -60,13 +61,13 @@ public class Graphics2D {
 //        if (mode < DRAW_AND || mode > DRAW_XOR) {
 //            throw new IllegalArgumentException("Invalid mode");
 //        }
-//        System.out.printf("graphic width %d height %d  src width %d height %d \n", image.getWidth(), image.getHeight(), src.getWidth(), src.getHeight());
+//
         int[] srcPixels = new int[sw * sh];
         src.getRGB(srcPixels, 0, sw, sx, sy, sw, sh);
 
         int[] destPixels = new int[sw * sh];
         Image image = convertToImage(Toolkit.graphics.getImage());
-        image.getRGB(destPixels, 0, sw, tx, ty, sw, sh);
+        image.getRGB(destPixels, 0, sw, tx+1, ty+1, sw, sh);
 
         switch (mode) {
             case DRAW_COPY:

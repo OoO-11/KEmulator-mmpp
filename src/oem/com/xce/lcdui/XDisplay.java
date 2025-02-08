@@ -45,7 +45,9 @@ public class XDisplay {
 
     // TODO : is this right?
     public static void copyLCD(Graphics g, Image i, int x, int y, int w, int h){
-        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] copyLCD");
-//        g.drawImage(Image.createImage(i, x, y, w, h, 0),0,0,0);
+        Emulator.getEmulator().getLogStream().println("[xce.lcdui.XDisplay] copyLCD" + width +" "+ height2);
+//        g.drawImage(i, w, h,0);
+        Toolkit.graphics.drawImage(i, -x, -y, Graphics.TOP | Graphics.LEFT);
+//        g.drawImage(Image.createImage(i, x, y, w, h, 0),w,h,0);
     }
 }

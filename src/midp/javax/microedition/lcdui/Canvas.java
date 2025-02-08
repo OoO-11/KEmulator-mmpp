@@ -54,7 +54,7 @@ public abstract class Canvas extends Displayable {
 
 	protected Canvas() {
 		super();
-		this.setFullScreenMode(false);
+		this.setFullScreenMode(true);
 		nokiaCanvasItems = new ArrayList<CanvasItem>();
 	}
 
