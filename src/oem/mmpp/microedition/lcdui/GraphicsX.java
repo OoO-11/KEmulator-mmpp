@@ -1,6 +1,5 @@
 package mmpp.microedition.lcdui;
 
-import com.sun.midp.lcdui.ImageDelegate;
 import emulator.graphics2D.IImage;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;

@@ -35,10 +35,15 @@ public class Graphics2D {
 
     private Graphics2D(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] Graphics2D");
-        IScreen scr = Emulator.getEmulator().getScreen();
-//        final IImage screenImage = scr.getScreenImg();
         graphics = g;
-//        image = convertToImage(screenImage);
+        Emulator.getEmulator().getLogStream().println(
+                "[Graphics2D] Original Graphics Translate: (" +
+                        g.getTranslateX() + ", " + g.getTranslateY() + ")"
+        );
+        Emulator.getEmulator().getLogStream().println(
+                "[Graphics2D] Original Graphics Clip: (" +
+                        g.getClipX() + ", " + g.getClipY() + ", " + g.getClipWidth() + ", " + g.getClipHeight() + ")"
+        );
     }
 
     // Static method to capture LCD image
@@ -53,11 +58,11 @@ public class Graphics2D {
     public void drawImage(int tx, int ty, Image src, int sx, int sy, int sw, int sh, int mode) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] drawImage "+mode);
         System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
-        System.out.printf("src width %d height %d \n", src.getWidth(), src.getHeight());
-
         if (src == null) {
             throw new NullPointerException("Source image cannot be null");
         }
+//        graphics.setColor(16749056);
+//        graphics.fillRect(5, 8, 110, 1);
 //        if (mode < DRAW_AND || mode > DRAW_XOR) {
 //            throw new IllegalArgumentException("Invalid mode");
 //        }
@@ -67,7 +72,7 @@ public class Graphics2D {
 
         int[] destPixels = new int[sw * sh];
         Image image = convertToImage(Toolkit.graphics.getImage());
-        image.getRGB(destPixels, 0, sw, tx+1, ty+1, sw, sh);
+        image.getRGB(destPixels, 0, sw, tx, ty, sw, sh);
 
         switch (mode) {
             case DRAW_COPY:
