@@ -24,6 +24,9 @@ public class Graphics2D {
 //    private static Image image;
     private static boolean[][] pixelMask;
 
+    private int transx = 0;
+    private int transy = 0;
+
     // Method to get Graphics2D object
     public static Graphics2D getGraphics2D(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] getGraphics2D");
@@ -36,6 +39,8 @@ public class Graphics2D {
     private Graphics2D(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] Graphics2D");
         graphics = g;
+        transx = g.getTranslateX();
+        transy = g.getTranslateY();
         Emulator.getEmulator().getLogStream().println(
                 "[Graphics2D] Original Graphics Translate: (" +
                         g.getTranslateX() + ", " + g.getTranslateY() + ")"
@@ -58,11 +63,15 @@ public class Graphics2D {
     public void drawImage(int tx, int ty, Image src, int sx, int sy, int sw, int sh, int mode) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] drawImage "+mode);
         System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
+        System.out.printf("width %d height %d %d %d \n", src.getWidth(), src.getHeight(), transx, transy);
         if (src == null) {
             throw new NullPointerException("Source image cannot be null");
         }
 //        graphics.setColor(16749056);
 //        graphics.fillRect(5, 8, 110, 1);
+//        src.getGraphics().setColor(16749056);
+//        src.getGraphics().fillRect(5, 8, 110, 1);
+//        System.out.println("transX"+src.getGraphics().getClipX()+src.getGraphics().getTranslateX());
 //        if (mode < DRAW_AND || mode > DRAW_XOR) {
 //            throw new IllegalArgumentException("Invalid mode");
 //        }
@@ -72,12 +81,12 @@ public class Graphics2D {
 
         int[] destPixels = new int[sw * sh];
         Image image = convertToImage(Toolkit.graphics.getImage());
-        image.getRGB(destPixels, 0, sw, tx, ty, sw, sh);
+        image.getRGB(destPixels, 0, sw, transx+tx, transy+ty, sw, sh);
 
         switch (mode) {
             case DRAW_COPY:
                 Image subImage = Image.createImage(src, sx, sy, sw, sh, 0);
-                Toolkit.graphics.drawImage(subImage, tx, ty,0);
+                Toolkit.graphics.drawImage(subImage, transx+tx, transy+ty,0);
                 break;
             case DRAW_AND:
                 for (int x = 0; x < sw; x++) {
@@ -85,7 +94,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] & srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), transx+tx, transy+ty, 0);
                 break;
             case DRAW_OR:
                 for (int x = 0; x < sw; x++) {
@@ -93,7 +102,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] | srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), transx+tx, transy+ty, 0);
                 break;
             case DRAW_XOR:
                 for (int x = 0; x < sw; x++) {
@@ -101,7 +110,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] ^ srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), transx+tx, transy+ty, 0);
                 break;
         }
     }
