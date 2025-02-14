@@ -53,7 +53,6 @@ public class XTextField {
     public String getText() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  getText");
         return text;
-//        return textField.getString();
     }
 
     public void keyPressed(int keyCode) {
@@ -85,15 +84,14 @@ public class XTextField {
         g.setColor(0xFF000000);
         g.drawRect(x, y, width, height);
 
-        g.drawString(text, x + 1, y + 1, Graphics.LEFT | Graphics.TOP);
-
-//        g.drawString(textField.getString(), textField.getCaretPosition(), 0, Graphics.TOP | Graphics.LEFT);
+        g.drawString(text, x, y, Graphics.LEFT | Graphics.TOP);
     }
 
     public void repaint() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  repaint");
         // Repainting 처리
-        Emulator.getEmulator().getScreen().getBackBufferImage().getGraphics().drawString(text, x+1, y+1);
+        canvas.repaint();
+
     }
 
     public void setMaxSize(int maxSize) {
@@ -106,7 +104,6 @@ public class XTextField {
     public int getMaxSize() {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  getMaxSize");
         return this.maxSize;
-//        return textField.getMaxSize();
     }
 
     public void setBounds(int x, int y, int width, int height) {
@@ -145,7 +142,8 @@ public class XTextField {
         if(text.length() > maxSize){
             return;
         }
-        text = text.substring(0, cursorPos) + key + text.substring(cursorPos);
+        // TODO : input... kr / en / ...
+        text = text.substring(0, cursorPos) + "김" + text.substring(cursorPos);
         cursorPos++;
     }
 }

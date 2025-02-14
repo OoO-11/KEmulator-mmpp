@@ -53,9 +53,16 @@ public class Graphics2D {
 
     // Static method to capture LCD image
     public static Image captureLCD(int x, int y, int w, int h) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD");
+        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD"+x+" "+y+" "+w+" "+h);
         IScreen scr = Emulator.getEmulator().getScreen();
         final IImage backBufferImage2 = scr.getBackBufferImage();
+
+        //code for debug
+//        if(h>backBufferImage2.getHeight())
+//            h = backBufferImage2.getHeight();
+//        if(w>backBufferImage2.getWidth())
+//            w = backBufferImage2.getWidth();
+
         return Image.createImage(convertToImage(backBufferImage2), x, y, w, h, 0);
     }
 
@@ -63,7 +70,7 @@ public class Graphics2D {
     public void drawImage(int tx, int ty, Image src, int sx, int sy, int sw, int sh, int mode) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] drawImage "+mode);
         System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
-        System.out.printf("width %d height %d %d %d \n", src.getWidth(), src.getHeight(), transx, transy);
+        System.out.printf("width %d height %d %d %d \n", src.getWidth(), src.getHeight(), transx+tx, transy+ty);
         if (src == null) {
             throw new NullPointerException("Source image cannot be null");
         }
@@ -76,6 +83,16 @@ public class Graphics2D {
 //            throw new IllegalArgumentException("Invalid mode");
 //        }
 //
+        //code for debug
+//        if(transx+tx+sw > Toolkit.graphics.getImage().getWidth() || transx+tx > Toolkit.graphics.getImage().getWidth()) {
+//            tx = Toolkit.graphics.getImage().getWidth() - (transx + sw);
+////            return;
+//        }
+//        if(transx+ty+sh > Toolkit.graphics.getImage().getHeight() || transx+ty > Toolkit.graphics.getImage().getHeight()) {
+//            ty = Toolkit.graphics.getImage().getHeight() - (transx + sh);
+////            return;
+//        }
+
         int[] srcPixels = new int[sw * sh];
         src.getRGB(srcPixels, 0, sw, sx, sy, sw, sh);
 
@@ -117,35 +134,29 @@ public class Graphics2D {
 
     // Method to invert a rectangle
     public void invertRect(int x, int y, int w, int h) {
-//        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] invertRect");
-//        if (w <= 0 || h <= 0) {
-//            throw new IllegalArgumentException("Width and height must be greater than 0");
-//        }
-//        IScreen scr = Emulator.getEmulator().getScreen();
-//        final IImage screenImage = scr.getScreenImg();
-//        Image image = convertToImage(screenImage);
+        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] invertRect "+x+" "+y+" "+w+" "+h);
+        System.out.println(transx + " " + transy);
+        if (w <= 0 || h <= 0) {
+            throw new IllegalArgumentException("Width and height must be greater than 0");
+        }
 
-        // 대상 영역의 픽셀을 가져오기 위해 원본 화면을 복사한 Image 생성
-//        Image img = Image.createImage(w, h);
-//        Graphics tempG = img.getGraphics();
-//        tempG.drawImage(image, -x, -y, Graphics.TOP | Graphics.LEFT); // 원본 화면을 복사
-//
-//        int[] rgbData = new int[w * h];
-//        img.getRGB(rgbData, 0, w, 0, 0, w, h); // RGB 데이터 추출
-//
-//        // 픽셀 색상을 반전 (네거티브 효과)
-//        for (int i = 0; i < rgbData.length; i++) {
-//            int color = rgbData[i];
-//
-//            // 색상 반전 (알파값 유지)
-//            int alpha = color & 0xFF000000;
-//            int invertedColor = alpha | (~color & 0x00FFFFFF);
-//
-//            rgbData[i] = invertedColor;
-//        }
-//
-//        Image invertedImg = Image.createRGBImage(rgbData, w, h, true);
-//        graphics.drawImage(invertedImg, x, y, Graphics.TOP | Graphics.LEFT);
+        int[] rgbData = new int[w * h];
+        Image image = convertToImage(Toolkit.graphics.getImage());
+        image.getRGB(rgbData, 0, w, transx+x, transy+y, w, h);
+
+        // 픽셀 색상을 반전 (네거티브 효과)
+        for (int i = 0; i < rgbData.length; i++) {
+            int color = rgbData[i];
+
+            // 색상 반전 (알파값 유지)
+            int alpha = color & 0xFF000000;
+            int invertedColor = alpha | (~color & 0x00FFFFFF);
+
+            rgbData[i] = invertedColor;
+        }
+
+        Image invertedImg = Image.createRGBImage(rgbData, w, h, false);
+        Toolkit.graphics.drawImage(invertedImg, transx+x, transy+y, Graphics.TOP | Graphics.LEFT);
     }
 
     // Method to get a pixel color
