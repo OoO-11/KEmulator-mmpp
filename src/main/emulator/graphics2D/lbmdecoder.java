@@ -1,6 +1,7 @@
 package emulator.graphics2D;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,14 +56,16 @@ public class lbmdecoder {
             buffer.get(maskPlane);
         }
 
-//        System.out.println("Type: " + type + " width "+width+" height "+height+" size "+size+" mask "+mask);
-
         // BufferedImage 생성
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        WritableRaster raster = image.getRaster();
 
         // 256 color
         if(type == 8) {
+//            System.out.println("lbm 256 "+mask);
             int index = 0;
+            int[] pixelData = new int[width * height * 4]; // 한 픽셀당 4개의 값 (R, G, B, A)
+            int pixelIndex = 0;
             // 픽셀 데이터를 ARGB 값으로 변환
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
@@ -91,38 +94,54 @@ public class lbmdecoder {
                         }
                     }
 
-                    // ARGB 값 설정
-                    int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
-                    image.setRGB(x, y, argb);
+                    // pixelData 배열에 RGBA 값 설정
+                    pixelData[pixelIndex] = red;       // Red
+                    pixelData[pixelIndex + 1] = green; // Green
+                    pixelData[pixelIndex + 2] = blue;  // Blue
+                    pixelData[pixelIndex + 3] = alpha; // Alpha
+
+                    pixelIndex += 4;
                 }
 
             }
+            raster.setPixels(0, 0, width, height, pixelData);
+            return image;
         }
         else if(type == 2){
             // 4 gray with 2 bit plane
+            int[] pixelData = new int[width * height * 4]; // 한 픽셀당 4개의 값 (R, G, B, A)
+            int pixelIndex = 0;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    int index = y * width + x;
+                    int maskPlaneIndex = (y >> 3) * width + x; // 마스크 데이터의 1D 인덱스
+                    int bitindex = y & 7;
 
-                    // 각 픽셀의 비트 값 추출
-                    int bit1 = (data[index / 8] >> (7 - (index % 8))) & 1;
-                    int bit2 = (data2[index / 8] >> (7 - (index % 8))) & 1;
+//                    // 알파 값을 마스크 플레인에서 가져오기
+                    int alpha = 255; // 기본값 (완전히 불투명)
+                    if (mask == 1) {
+                        if (((maskPlane[maskPlaneIndex] >> bitindex) & 1) == 1) {
+                            alpha = 0;
+                        }
+                    }
 
-                    // 2비트를 결합하여 4-gray 레벨 값 계산 (0-3)
-                    int grayLevel = (bit1 << 1) | bit2;
+                    int bit1 = (data[maskPlaneIndex] >> bitindex) & 1;
+                    int bit2 = (data2[maskPlaneIndex] >> bitindex) & 1;
+                    byte color = (byte) ~(bit1 * 0xF0 | bit2 * 0x0F);
 
-                    // 4-gray 레벨 값을 0-255 사이의 그레이스케일 값으로 변환
-                    int grayValue = (grayLevel * 255) / 3;
+                    pixelData[pixelIndex] = color;     // Red
+                    pixelData[pixelIndex + 1] = color; // Green
+                    pixelData[pixelIndex + 2] = color; // Blue
+                    pixelData[pixelIndex + 3] = alpha; // Alpha
 
-                    // BufferedImage에 그레이스케일 값 설정
-                    image.getRaster().setSample(x, y, 0, grayValue);
+                    pixelIndex += 4;
+
                 }
             }
+            raster.setPixels(0, 0, width, height, pixelData);
+            return image;
         }
         else{
             throw new RuntimeException("Not implemented yet.");
         }
-
-        return image;
     }
 }

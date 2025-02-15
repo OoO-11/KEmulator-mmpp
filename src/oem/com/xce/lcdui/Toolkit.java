@@ -24,8 +24,8 @@ public class Toolkit {
     public static String iconsDir;
     public static com.xce.lcdui.MIDPRes MIDP_RES;
 
-    public static int tranx = 0;
-    public static int trany = 0;
+    public static int tranx;
+    public static int trany;
 
     public Toolkit() {
         Emulator.getEmulator().getLogStream().println("[xce.lcdui.Toolkit]  init");

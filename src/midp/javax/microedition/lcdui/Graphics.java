@@ -4,6 +4,7 @@ import com.jblend.graphics.j3d.Effect3D;
 import com.jblend.graphics.j3d.Figure;
 import com.jblend.graphics.j3d.FigureLayout;
 import com.jblend.graphics.j3d.Texture;
+import com.xce.lcdui.Toolkit;
 import emulator.Emulator;
 import emulator.Settings;
 import emulator.debug.Profiler;
@@ -514,6 +515,9 @@ public class Graphics
 		++Profiler.drawCallCount;
 		this.tx += x;
 		this.ty += y;
+//		System.out.println("Graphic Translate "+x+" "+y);
+		Toolkit.tranx += x;
+		Toolkit.trany += y;
 		this.impl.translate(x, y);
 		if (xrayGraphics != null)
 			this.xrayGraphics.translate(x, y);
@@ -573,6 +577,7 @@ public class Graphics
 		setStrokeStyle(SOLID);
 		translate(-tx, -ty);
 		ty = tx = 0;
+		Toolkit.tranx = Toolkit.trany = 0;
 		impl.reset();
 		if (xrayGraphics != null)
 			xrayGraphics.reset();
@@ -584,6 +589,7 @@ public class Graphics
 		setStrokeStyle(SOLID);
 		translate(-tx, -ty);
 		ty = tx = 0;
+		Toolkit.tranx = Toolkit.trany = 0;
 		impl.reset();
 		if (xrayGraphics != null)
 			xrayGraphics.reset();

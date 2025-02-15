@@ -8,6 +8,7 @@ import javax.microedition.lcdui.Image;
 
 public class XDisplay {
     public static int width = Emulator.getEmulator().getScreen().getBackBufferImage().getWidth();
+    public static int height = Emulator.getEmulator().getScreen().getBackBufferImage().getHeight();
     public static int height2 = Emulator.getEmulator().getScreen().getBackBufferImage().getHeight();
 
     public static void refresh(int x, int y, int width, int height) {
