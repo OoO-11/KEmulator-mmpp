@@ -109,7 +109,7 @@ public final class KeyMapping {
 		KeyMapping.strToPCKey.put("S1", String.valueOf(s1));
 		KeyMapping.strToPCKey.put("S2", String.valueOf(s2));
 
-		// skvm keymapping
+		// sk-vm keymapping
 		if(Emulator.zipPath != null){
 			KeyMapping.strToPCKey.put("CLR", "8");
 		}

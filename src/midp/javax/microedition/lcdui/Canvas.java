@@ -36,6 +36,7 @@ public abstract class Canvas extends Displayable {
 	public static final int KEY_POUND = 35;
 
 	// SKT-specific keys
+	// sk-vm
 	public static final int KEY_CLR = 8;
 	public static final int KEY_COML = 129;
 	public static final int KEY_COMC = 130;
@@ -45,6 +46,8 @@ public abstract class Canvas extends Displayable {
 	public static final int KEY_RIGHT = 145;
 	public static final int KEY_DOWN = 146;
 	public static final int KEY_FIRE = 148;
+	public static final int KEY_CALL = 190;
+	public static final int KEY_END = 191;
 
 	protected int m_keyStates;
 	private Graphics graphics;

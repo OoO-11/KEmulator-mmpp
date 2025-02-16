@@ -823,7 +823,7 @@ public class Emulator implements Runnable {
 			}
 		} catch (Exception ignored) {}
 
-		// skvm properties
+		// sk-vm properties
 		System.setProperty("com.xce.wipi.version", "1.0.0");
 		System.setProperty("m.SK_VM", "20");
 		System.setProperty("m.VENDER", "LG");

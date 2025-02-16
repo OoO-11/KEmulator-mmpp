@@ -52,10 +52,10 @@ public class Graphics2D {
         final IImage backBufferImage2 = scr.getBackBufferImage();
 
         //code for debug
-//        if(h>backBufferImage2.getHeight())
-//            h = backBufferImage2.getHeight();
-//        if(w>backBufferImage2.getWidth())
-//            w = backBufferImage2.getWidth();
+        if(h>backBufferImage2.getHeight())
+            h = backBufferImage2.getHeight();
+        if(w>backBufferImage2.getWidth())
+            w = backBufferImage2.getWidth();
 
         return Image.createImage(convertToImage(backBufferImage2), x, y, w, h, 0);
     }

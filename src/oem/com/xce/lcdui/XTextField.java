@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Graphics;
 
 import emulator.Emulator;
 
-public class XTextField {
+public class XTextField implements IInputTarget{
     private String text;
     private int maxSize;
     private boolean focus;
@@ -22,6 +22,8 @@ public class XTextField {
     private TextField textField;
     private Canvas canvas;
     private Graphics g;
+
+    private InputMethod ime = new HangulInputMethod();
 
     public XTextField(String text, int maxSize, int constraints, Canvas canvas) {
 //        super("", text, maxSize, constraints);
@@ -46,6 +48,7 @@ public class XTextField {
         if (cursorPos > text.length()) {
             cursorPos = text.length();
         }
+        ime.startNewCharacter(this);
 
         textField.setString(s);
     }
@@ -58,7 +61,7 @@ public class XTextField {
     public void keyPressed(int keyCode) {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  keyPressed "+keyCode);
         // 키 입력 처리
-        inputChar((char)keyCode);
+        ime.keyPress(this, keyCode);
         System.out.println(text);
         repaint();
     }
@@ -129,10 +132,16 @@ public class XTextField {
         Emulator.getEmulator().getLogStream().println("[xce.io.XTextField]  inputChar " + key);
         textField.insert(new String(new char[]{key}), textField.getCaretPosition());
         if(!focus){
-            System.out.println("return");
             return;
         }
-        if (key == 8) {
+//        if (key == 8) {
+//            if (cursorPos == 0) return;
+//
+//            text = text.substring(0, cursorPos - 1) + text.substring(cursorPos);
+//            cursorPos--;
+//            return;
+//        }
+        if (key == '\b') {
             if (cursorPos == 0) return;
 
             text = text.substring(0, cursorPos - 1) + text.substring(cursorPos);
@@ -142,8 +151,20 @@ public class XTextField {
         if(text.length() > maxSize){
             return;
         }
-        // TODO : input... kr / en / ...
-        text = text.substring(0, cursorPos) + "김" + text.substring(cursorPos);
+//        // TODO : input... kr / en / ...
+        text = text.substring(0, cursorPos) + key + text.substring(cursorPos);
         cursorPos++;
+
+
+    }
+
+    @Override
+    public void generateInputCharacter(char ch) {
+        inputChar(ch);
+    }
+
+    @Override
+    public void discardInputCharacter() {
+        inputChar('\b');
     }
 }
