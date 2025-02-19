@@ -79,6 +79,9 @@ public class Displayable {
 		if (swtContentArea != null) {
 			return swtContentArea.height;
 		}
+		if(Emulator.zipPath != null){
+			return (bounds[H]-16);
+		}
 		return bounds[H];
 	}
 
