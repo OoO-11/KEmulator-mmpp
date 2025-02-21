@@ -6,6 +6,7 @@ import club.minnced.discord.rpc.DiscordRichPresence;
 import com.github.sarxos.webcam.Webcam;
 import com.skt.m.SecureUtil;
 import com.skt.m.SecureUtill2;
+import com.skt.m.SecureUtill3;
 import emulator.custom.CustomClassLoader;
 import emulator.custom.CustomMethod;
 import emulator.graphics3D.IGraphics3D;
@@ -436,7 +437,7 @@ public class Emulator implements Runnable {
 			if(var3 != -1) {
 				var4 = var2.substring(var3 + 16, var3 + 26);
 				props.put("MIDlet-Key", SecureUtil.isValid("01100000000",var4));
-				props.put("MIDlet-Key2", SecureUtil.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
+				props.put("MIDlet-Key2", SecureUtill3.isValid("01100000000",var4, props.getProperty("MIDlet-1").trim()));
 //				props.put("MIDlet-Key3", SecureUtill2.isValid("00000000",var4, props.getProperty("MIDlet-1").trim()));
 				props.put("MIDlet-Key4", SecureUtill2.isValid("00000000",var4, props.getProperty("MIDlet-1").trim()));
 			}
@@ -834,6 +835,7 @@ public class Emulator implements Runnable {
 		System.setProperty("MIN", "0000000000");
 		System.setProperty("m.TYPE", "???");
 		System.setProperty("m.EXT_SW", "???");
+		System.setProperty("m.SKT_API", "1.2");
 
 	}
 

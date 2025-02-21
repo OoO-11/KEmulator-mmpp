@@ -16,6 +16,7 @@ public class Graphics2D {
     public static final int DRAW_XOR = 3;
 
     private static Graphics graphics;
+    private static Image image;
     private static boolean[][] pixelMask;
 
 
@@ -31,6 +32,7 @@ public class Graphics2D {
     private Graphics2D(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] Graphics2D");
         graphics = g;
+        image = convertToImage(g.getImage());
         if(g.getTranslateX() != 0 || g.getTranslateY() != 0) {
             Toolkit.tranx = g.getTranslateX();
             Toolkit.trany = g.getTranslateY();
@@ -158,9 +160,12 @@ public class Graphics2D {
     // Method to get a pixel color
     public int getPixel(int x, int y) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] getPixel");
-        IScreen scr = Emulator.getEmulator().getScreen();
-        final IImage screenImage = scr.getScreenImg();
-        Image image = convertToImage(screenImage);
+//        IScreen scr = Emulator.getEmulator().getScreen();
+//        final IImage screenImage = scr.getScreenImg();
+//        Image image = convertToImage(screenImage);
+//        int[] rgbData = new int[1];
+//        image.getRGB(rgbData, 0, 1, x, y, 1, 1);
+//        return rgbData[0];
         int[] rgbData = new int[1];
         image.getRGB(rgbData, 0, 1, x, y, 1, 1);
         return rgbData[0];
@@ -195,14 +200,14 @@ public class Graphics2D {
 
     // Static method to create a maskable image
     public static Image createMaskableImage(int width, int height) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] createMaskableImage");
+        Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] createMaskableImage "+width+" "+height);
 
         // 새로운 이미지 생성
         Image maskableImage = Image.createImage(width, height);
-        Graphics g = maskableImage.getGraphics();
         pixelMask = new boolean[width][height];
 
         // 초기화 작업 (필요에 따라 추가 작업 가능)
+//        Graphics g = maskableImage.getGraphics();
 //        g.setColor(0x000000); // 검은색으로 초기화
 //        g.fillRect(0, 0, width, height);
         // white by default?
