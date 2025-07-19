@@ -12,7 +12,7 @@ public interface AudioClip {
 
     void loop() throws UserStopException, IOException;
 
-    void stop() throws IOException;
+    void stop() throws IOException, InterruptedException;
 
     void pause() throws IOException;
 
