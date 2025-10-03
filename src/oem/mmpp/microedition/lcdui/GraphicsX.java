@@ -18,6 +18,11 @@ public class GraphicsX extends Graphics {
         Emulator.getEmulator().getLogStream().println("[mmpp] GraphicsX");
     }
 
+    public GraphicsX(IImage paramImageDelegatem, IImage i2){
+        super(paramImageDelegatem, i2);
+        Emulator.getEmulator().getLogStream().println("[mmpp] GraphicsX2");
+    }
+
     public Image capture(int x, int y, int width, int height) {
         Emulator.getEmulator().getLogStream().println("[mmpp] capture");
         if (width <= 0 || height <= 0){

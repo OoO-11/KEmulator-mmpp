@@ -6,6 +6,7 @@ import emulator.Settings;
 import emulator.debug.Profiler;
 import emulator.graphics2D.IImage;
 import emulator.ui.swt.EmulatorImpl;
+import mmpp.microedition.lcdui.GraphicsX;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -80,7 +81,7 @@ public class Image {
 			this.xrayBuffer = Emulator.getEmulator().newImage(this.getWidth(), this.getHeight(), true);
 		}
 
-		return new Graphics(this.imageImpl, xrayBuffer);
+		return new GraphicsX(this.imageImpl, xrayBuffer);
 	}
 
 	public int getWidth() {
