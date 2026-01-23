@@ -19,8 +19,10 @@ public class Graphics
 		implements com.vodafone.v10.graphics.j3d.Graphics3D,
 		com.motorola.graphics.j3d.Graphics3D,
 		com.jblend.graphics.j3d.Graphics3D {
-	IGraphics2D impl;
-	IImage image;
+	protected IGraphics2D impl;
+	protected IImage image;
+	protected int alpha = 256;
+	protected boolean xorMode = false;
 	IImage copyimage;
 	IGraphics2D xrayGraphics;
 	IImage xrayImage;

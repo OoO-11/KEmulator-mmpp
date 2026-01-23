@@ -95,7 +95,8 @@ public class MediaPlayer {
 			Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
 			if (audio == null)
 				return;
-			audio.play(1, Integer.parseInt(currentVolume));
+			int ln = loop? 255 : 1;
+			audio.play(ln, Integer.parseInt(currentVolume));
 		}
 	}
 
