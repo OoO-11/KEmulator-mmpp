@@ -10,6 +10,7 @@ import emulator.ui.IScreen;
 
 public class GraphicsX extends Graphics {
     public static int DEFAULT_ALPHA = 256;
+    public int xorcolor = 0;
 
     public GraphicsX(IImage paramImageDelegate) {
         super(paramImageDelegate);
@@ -80,6 +81,13 @@ public class GraphicsX extends Graphics {
         this.xorMode = false;
     }
 
+    public void setXORMode(int RGB) {
+        Emulator.getEmulator().getLogStream().println("[mmpp] setXORMode" + RGB);
+        this.xorMode = true;
+        this.xorcolor = RGB;
+        this.alpha = DEFAULT_ALPHA;
+    }
+
     public void setPixel(int x, int y, int RGB) {
         Emulator.getEmulator().getLogStream().println("[mmpp] setPixel");
         if (x < this.getClipX() || y < this.getClipY() || x >= this.getClipX() + this.getClipWidth() || y >= this.getClipY() + this.getClipHeight()) {
@@ -88,54 +96,41 @@ public class GraphicsX extends Graphics {
         this.getImage().setRGB(x, y, RGB);
     }
 
-    public void setXORMode(int RGB) {
-        Emulator.getEmulator().getLogStream().println("[mmpp] setXORMode" + RGB);
-        this.xorMode = true;
-        this.setColor(RGB);
-        this.alpha = DEFAULT_ALPHA;
-    }
 
     public void fillRect(final int x, final int y, final int width, final int height) {
         ++Profiler.drawCallCount;
 
-        int w = Math.max(width, 1);  // 최소 너비 보장
-        int h = Math.max(height, 1); // 최소 높이 보장
+        int ww, hh, xx, yy;
+        int imgW = this.image.getWidth();
+        int imgH = this.image.getHeight();
 
-        Emulator.getEmulator().getLogStream().println("x " + x + " y " + y + " w " + w + " h " + h);
+        xx = Math.max(0, x);
+        int maxX = Math.min(imgW, x + width);
+        ww = maxX - xx;
 
-        IScreen scr = Emulator.getEmulator().getScreen();
-        final IImage backBufferImage2 = scr.getBackBufferImage();
+        yy = Math.max(0, y);
+        int maxY = Math.min(imgH, y + height);
+        hh = maxY - yy;
 
-        int ww = x+w > 240? 240-x : w;
-        int hh = y+h > 360? 360-y : h;
+        if (ww <= 0 || hh <= 0) {
+            Emulator.getEmulator().getLogStream().println("[mmpp] fillRect skip" + ww + " " + hh);
+            return;
+        }
 
         int[] pixels = new int[ww * hh];
-        this.image.getRGB(pixels, 0, ww, x, y, ww, hh);
-
-//        backBufferImage2.getRGB(pixels, 0, ww, x, y, ww, hh);
-//        IImage iima = Image.createRGBImage(pixels, ww, hh, true).getImpl();
-
+        this.image.getRGB(pixels, 0, ww, xx, yy, ww, hh);
 
         if(this.xorMode) {
             Emulator.getEmulator().getLogStream().println("[mmpp] fillRect(xor) x:" + x + " y:" + y + " w:" + width + " h:" + height + " alpha: " + this.alpha);
 
+            int currentColor = this.getColor();
             // XOR 연산 수행
             for (int i = 0; i < pixels.length; i++) {
-                pixels[i] ^= this.getColor();
+                pixels[i] ^= (currentColor ^ this.xorcolor);
             }
 
-            // 원본 이미지에 XOR 결과를 다시 덮어쓰기
-            // 이게 없으면 타이틀 나머지 나오는 대신 버전이 안나오고 메뉴에 개가 검은색으로 나오고, 인트로 글이 흰색으로 나옴
-            // 있으면 타이틀 xor이 잘못 적용되고 인트로도 멀쩡하게 작동함.
-            // 있는게 맞는 것 같긴 한데, 타이틀 왜 잘못나오지
-            this.image.setRGB(x, y, ww, hh, pixels, 0, ww);
-
-
-            // 전체 이미지 다시 그리기
-            this.impl.drawImage(this.image, 0, 0);
-
-//            iima.setRGB(0, 0, ww, hh, pixels, 0, ww);
-//            this.impl.drawImage(iima, 0, 0);
+            this.image.setRGB(xx, yy, ww, hh, pixels, 0, ww);
+//            drawRGB(pixels, 0, ww, xx, yy, ww, hh, true);
 
         }
         else{
@@ -144,25 +139,25 @@ public class GraphicsX extends Graphics {
             }
             else {
                 Emulator.getEmulator().getLogStream().println("[mmpp] fillRect (Alpha) x:" + x + " y:" + y + " w:" + width + " h:" + height + " alpha:" + this.alpha);
-
+                int srcRGB = this.getColor(); // 현재 설정된 브러시 색상
+                int srcR = (srcRGB >> 16) & 0xFF;
+                int srcG = (srcRGB >> 8) & 0xFF;
+                int srcB = srcRGB & 0xFF;
                 for (int i = 0; i < pixels.length; i++) {
-                    // 기존 픽셀과 새 색상을 alpha 블렌딩
-                    int srcR = (pixels[i] >> 16) & 0xFF;
-                    int srcG = (pixels[i] >> 8) & 0xFF;
-                    int srcB = pixels[i] & 0xFF;
+                    int destR = (pixels[i] >> 16) & 0xFF;
+                    int destG = (pixels[i] >> 8) & 0xFF;
+                    int destB = pixels[i] & 0xFF;
 
-                    int rr = srcR * this.alpha / 256;
-                    int gg = srcG * this.alpha / 256;
-                    int bb = srcB * this.alpha / 256;
+                    int rr = (srcR * this.alpha + destR * (256 - this.alpha)) >> 8;
+                    int gg = (srcG * this.alpha + destG * (256 - this.alpha)) >> 8;
+                    int bb = (srcB * this.alpha + destB * (256 - this.alpha)) >> 8;
 
-                    pixels[i] = (rr << 16) | (gg << 8) | bb;  // 블렌딩 결과
+                    pixels[i] = (rr << 16) | (gg << 8) | bb;
                 }
 
-                this.image.setRGB(x, y, ww, hh, pixels, 0, ww);
-                this.impl.drawImage(this.image, 0, 0);
+                this.image.setRGB(xx, yy, ww, hh, pixels, 0, ww);
+//                this.impl.drawImage(this.image, 0, 0);
 
-//                iima.setRGB(0, 0, ww, hh, pixels, 0, ww);
-//                this.impl.drawImage(iima, 0, 0);
             }
         }
     }
@@ -177,19 +172,21 @@ public class GraphicsX extends Graphics {
 
         if(this.xorMode){
             Emulator.getEmulator().getLogStream().println("[mmpp] drawImage (xor) x:" + n + " y:" + n2 + "alpha: " + this.alpha);
+            int currentColor = this.getColor();
             for (int i = 0; i < pixels.length; i++) {
-                pixels[i] ^= this.getColor();
+                pixels[i] ^= (currentColor ^ this.xorcolor);
             }
 
             ima.setRGB(0, 0, w, h, pixels, 0, w);
             this.impl.drawImage(ima, n, n2);
         }
         else{
-            if(this.alpha <= 256) {
+            if(this.alpha == 256) {
+                this.impl.setAlpha(255);
                 super.drawImage(image, n, n2, n3);
             }
             else {
-                Emulator.getEmulator().getLogStream().println("[mmpp] drawImage (Alpha) x:" + n + " y:" + n2 + "alpha: " + this.alpha);
+                Emulator.getEmulator().getLogStream().println("[mmpp] drawImage (Alpha) x:" + n + " y:" + n2 + "n3: " + n3 + "alpha: " + this.alpha);
 
                 int n5;
                 int height;
@@ -227,38 +224,9 @@ public class GraphicsX extends Graphics {
                     n2 = n5 - height;
                 }
 
-                int[] destPixels = new int[w * h];
-
-                for (int i = 0; i < pixels.length; i++) {
-                    // 소스 픽셀의 ARGB 추출
-                    int srcR = (pixels[i] >> 16) & 0xFF;
-                    int srcG = (pixels[i] >> 8) & 0xFF;
-                    int srcB = pixels[i] & 0xFF;
-
-                    int rr = srcR * this.alpha / 256;
-                    int gg = srcG * this.alpha / 256;
-                    int bb = srcB * this.alpha / 256;
-
-                    destPixels[i] = (rr << 16) | (gg << 8) | bb;
-                }
-                ima.setRGB(0, 0, w, h, destPixels, 0, w);
+                this.impl.setAlpha(this.alpha);
                 this.impl.drawImage(ima, n, n2);
             }
         }
     }
-
-//    public void setClip(final int n, final int n2, final int n3, final int n4) {
-//        ++Profiler.drawCallCount;
-//        this.impl.setClip(n, n2, n3, n4);
-//        if (xrayGraphics != null)
-//            this.xrayGraphics.setClip(n, n2, n3, n4);
-//    }
-
-//    public void setGrayScale(final int n) {
-//        Emulator.getEmulator().getLogStream().println("[mmpp] setGrayScale:" +n);
-//        if ((n & 0xFFFFFF00) > 0) {
-//            throw new IllegalArgumentException();
-//        }
-//        this.setColor(n, n, n);
-//    }
 }
