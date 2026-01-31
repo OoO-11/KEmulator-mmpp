@@ -836,6 +836,7 @@ public class Emulator implements Runnable {
 		System.setProperty("m.TYPE", "???");
 		System.setProperty("m.EXT_SW", "???");
 		System.setProperty("m.SKT_API", "1.2");
+		System.setProperty("microedition.phone.model", "???");
 
 	}
 

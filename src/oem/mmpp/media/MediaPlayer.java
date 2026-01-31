@@ -139,7 +139,7 @@ public class MediaPlayer {
 //		player.setLoopCount(loopCount);
 	}
 
-	public boolean getPlayBackLoop() {
+	public boolean isPlayBackLoop() {
 		Emulator.getEmulator().getLogStream().println("[mmpp] getPlayBackLoop");
 		return loop;
 	}

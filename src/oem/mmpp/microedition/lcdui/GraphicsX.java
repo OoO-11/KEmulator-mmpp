@@ -23,16 +23,32 @@ public class GraphicsX extends Graphics {
     }
 
     public Image capture(int x, int y, int width, int height) {
-        Emulator.getEmulator().getLogStream().println("[mmpp] capture");
+        Emulator.getEmulator().getLogStream().println("[mmpp] capture"+ x +" "+y+" "+width+" "+height);
         if (width <= 0 || height <= 0){
             throw new IllegalArgumentException("Width and height must be greater than 0.");
         }
-        if (x < 0 || y < 0 || x + width > this.getClipWidth() || y + height > this.getClipHeight()) {
+        if (x < this.getClipX() || y < this.getClipY() || width > this.getClipWidth() || height > this.getClipHeight()) {
             throw new IllegalArgumentException("Capture area is outside the clipping region.");
         }
-        int[] pixels = new int[width * height];
-        this.image.getRGB(pixels, 0, width, x, y, width, height);
-        return Image.createRGBImage(pixels, width, height, true);
+
+        int ww, hh, xx, yy;
+        int imgW = this.image.getWidth();
+        int imgH = this.image.getHeight();
+
+        Emulator.getEmulator().getLogStream().println("[mmpp] capture"+imgW+" "+imgH);
+
+        xx = Math.max(0, x);
+        int maxX = Math.min(imgW, x + width);
+        ww = maxX - xx;
+
+        yy = Math.max(0, y);
+        int maxY = Math.min(imgH, y + height);
+        hh = maxY - yy;
+
+
+        int[] pixels = new int[ww * hh];
+        this.image.getRGB(pixels, 0, ww, xx, yy, ww, hh);
+        return Image.createRGBImage(pixels, ww, hh, true);
     }
 
     public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints){
