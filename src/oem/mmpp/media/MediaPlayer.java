@@ -18,64 +18,108 @@ package mmpp.media;
 
 import emulator.Emulator;
 import emulator.custom.CustomJarResources;
-import com.samsung.util.AudioClip;
-
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
-import javax.microedition.media.control.VolumeControl;
-import java.io.ByteArrayInputStream;
+import emulator.media.MMFPlayer;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class MediaPlayer {
-	private Player player;
-	private AudioClip audio;
 	private boolean loop;
 	private String currentVolume = String.valueOf(MAX_VOLUME);
 	private static final int MAX_VOLUME = 5;
 	private final Object startLock = new Object();
 
-	public void setMediaLocation(String location) {
+	private byte[] data;
+	private int loopCount;
+	private int volume;
+
+	private Thread workerThread;
+	private BlockingQueue<Runnable> commandQueue;
+	private volatile boolean running = true;
+
+	public MediaPlayer(){
+		MMFPlayer.mmfplayerinit();
+		commandQueue = new LinkedBlockingQueue<>();
+		workerThread = new Thread(this::processCommands);
+		workerThread.setDaemon(true);
+		workerThread.start();
+	}
+
+	private void processCommands() {
+		while (running) {
+			try {
+				Runnable command = commandQueue.take();
+				command.run();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+		}
+	}
+
+	public void setMediaLocation(String location) throws IOException{
 		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaLocation to " + location);
 		try {
-//			InputStream is = CustomJarResources.getResourceAsStream(null, location);
-//			player = Manager.createPlayer(is, "audio/mmf");
-//			player.realize();
-//			is.close();
-			audio = new AudioClip(AudioClip.TYPE_MMF, location);
-		} catch (IOException e) {
-			e.printStackTrace();
-//		} catch (MediaException e) {
-//			e.printStackTrace();
+			commandQueue.put(() -> {
+				if (MMFPlayer.isPlaying()) {
+					MMFPlayer.stop();
+				}
+				try {
+					InputStream is = CustomJarResources.getResourceAsStream(location);
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					byte[] b = new byte[512];
+					while (is.available() > 0) {
+						int n2 = is.read(b);
+						baos.write(b, 0, n2);
+					}
+					this.data = baos.toByteArray();
+					MMFPlayer.initPlayer(this.data);
+					Emulator.getEmulator().getLogStream().println("[mmpp] setMediaLocation act");
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
 	public void setMediaSource(byte[] buffer, int offset, int length) {
-//		try {
-//			ByteArrayInputStream bis = new ByteArrayInputStream(buffer, offset, length);
-//			player = Manager.createPlayer(bis, "audio/mmf");
-//			player.realize();
-//			bis.close();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (MediaException e) {
-//			e.printStackTrace();
-//		}
 		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaSource");
-		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, offset, length);
+		try {
+			commandQueue.put(() -> {
+				if (MMFPlayer.isPlaying()) {
+					MMFPlayer.stop();
+				}
+				this.data = new byte[length];
+				System.arraycopy(buffer, offset, this.data, 0, length);
+				MMFPlayer.initPlayer(this.data);
+			});
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public void setMediaSource(byte[] buffer) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setMediaSource");
-		audio = new AudioClip(AudioClip.TYPE_MMF, buffer, 0, buffer.length);
+		try {
+			commandQueue.put(() -> {
+				if (MMFPlayer.isPlaying()) {
+					MMFPlayer.stop();
+				}
+				this.data = buffer.clone();
+				MMFPlayer.initPlayer(this.data);
+			});
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public void setVolumeLevel(String level) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setVolumeLevel to " + level);
-		if(audio == null)
-			return;
-        audio.volume = Integer.parseInt(level);
+		this.volume = Integer.parseInt(level);
 		currentVolume = level;
 	}
 
@@ -85,58 +129,59 @@ public class MediaPlayer {
 	}
 
 	public void start() {
-//		try {
-//			player.start();
-//
-//		} catch (MediaException e) {
-//			e.printStackTrace();
-//		}
+		Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
 		synchronized (startLock) {
-			Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
-			if (audio == null)
-				return;
-			int ln = loop? 255 : 1;
-			audio.play(ln, Integer.parseInt(currentVolume));
+			// Emulator.getEmulator().getLogStream().println("[mmpp] start " + currentVolume);
+			try {
+				commandQueue.put(() -> {
+					if (MMFPlayer.isPlaying()) {
+						MMFPlayer.stop();
+					}
+					this.loopCount = loop ? 255 : 1;
+					MMFPlayer.playSafe(this.loopCount, this.volume);
+					Emulator.getEmulator().getLogStream().println("[mmpp] start act" + currentVolume);
+				});
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 
 	public void pause() {
-//		try {
-//			player.stop();
-//		} catch (MediaException e) {
-//			e.printStackTrace();
-//		}
 		Emulator.getEmulator().getLogStream().println("[mmpp] pause");
-		audio.pause();
+		try {
+			commandQueue.put(() -> MMFPlayer.pause());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public void resume() {
-//		try {
-//			player.start();
-//		} catch (MediaException e) {
-//			e.printStackTrace();
-//		}
-		Emulator.getEmulator().getLogStream().println("[mmpp] resume" + currentVolume);
-		if(audio == null)
+		Emulator.getEmulator().getLogStream().println("[mmpp] resume");
+		if(data == null)
 			return;
-		audio.resume();
+		try {
+			commandQueue.put(() -> MMFPlayer.resume());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	public void stop() {
-//		if(player != null){
-//			player.close();
-//		}
 		Emulator.getEmulator().getLogStream().println("[mmpp] stop");
-		if(audio != null) {
-			audio.stop();
+		if(data != null) {
+			try {
+				commandQueue.clear();
+				commandQueue.put(() -> MMFPlayer.stop());
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
 		}
 	}
 
 	public void setPlayBackLoop(boolean val) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setPlayBackLoop " + val);
 		loop = val;
-//		int loopCount = val ? -1 : 1;
-//		player.setLoopCount(loopCount);
 	}
 
 	public boolean isPlayBackLoop() {
