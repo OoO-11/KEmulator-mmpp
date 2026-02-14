@@ -16,9 +16,8 @@ public class Graphics2D {
     public static final int DRAW_XOR = 3;
 
     private static Graphics graphics;
-    private static Image image;
     private static boolean[][] pixelMask;
-
+    int transx, transy;
 
     // Method to get Graphics2D object
     public static Graphics2D getGraphics2D(Graphics g) {
@@ -32,19 +31,6 @@ public class Graphics2D {
     private Graphics2D(Graphics g) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] Graphics2D");
         graphics = g;
-        image = convertToImage(g.getImage());
-        if(g.getTranslateX() != 0 || g.getTranslateY() != 0) {
-            Toolkit.tranx = g.getTranslateX();
-            Toolkit.trany = g.getTranslateY();
-        }
-        Emulator.getEmulator().getLogStream().println(
-                "[Graphics2D] Original Graphics Translate: (" +
-                        g.getTranslateX() + ", " + g.getTranslateY() + ")"
-        );
-        Emulator.getEmulator().getLogStream().println(
-                "[Graphics2D] Original Graphics Clip: (" +
-                        g.getClipX() + ", " + g.getClipY() + ", " + g.getClipWidth() + ", " + g.getClipHeight() + ")"
-        );
     }
 
     // Static method to capture LCD image
@@ -52,56 +38,68 @@ public class Graphics2D {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] captureLCD"+x+" "+y+" "+w+" "+h);
         IScreen scr = Emulator.getEmulator().getScreen();
         final IImage backBufferImage2 = scr.getBackBufferImage();
-
-        //code for debug
-//        if(h>backBufferImage2.getHeight())
-//            h = backBufferImage2.getHeight();
-//        if(w>backBufferImage2.getWidth())
-//            w = backBufferImage2.getWidth();
-
         return Image.createImage(convertToImage(backBufferImage2), x, y, w, h, 0);
     }
 
     // Method to draw an image
     public void drawImage(int tx, int ty, Image src, int sx, int sy, int sw, int sh, int mode) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] drawImage "+mode);
-        System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
-        System.out.printf("src width %d height %d toolkit %d %d \n", src.getWidth(), src.getHeight(), Toolkit.tranx, Toolkit.trany);
+//        System.out.printf("tx %d ty %d sx %d sy  %d sw %d sh %d \n", tx, ty, sx, sy, sw, sh);
+//        System.out.printf("src width %d height %d toolkit %d %d \n", src.getWidth(), src.getHeight(), Toolkit.tranx, Toolkit.trany);
+//        System.out.printf("graphics image w x %d h %d\n", graphics.getImage().getWidth(), graphics.getImage().getHeight());
 
         if (src == null) {
             throw new NullPointerException("Source image cannot be null");
         }
-
         if (mode < DRAW_COPY || mode > DRAW_XOR) {
             throw new IllegalArgumentException("Invalid mode");
         }
 
-        //code to debug
-        sw = sw==0? sw+1 : sw;
-        if(Toolkit.tranx+tx+sw > Toolkit.graphics.getImage().getWidth() ||
-                Toolkit.tranx+tx > Toolkit.graphics.getImage().getWidth() ||
-                Toolkit.tranx+tx < 0)
-        {
-            return;
+        // 좌표와 크기 보정
+        if (sx < 0) {
+            sw += sx;   // sx가 음수면 그만큼 폭 줄임
+            sx = 0;
         }
-        if(Toolkit.trany+ty+sh > Toolkit.graphics.getImage().getHeight() ||
-                Toolkit.trany+ty > Toolkit.graphics.getImage().getHeight() ||
-                Toolkit.trany+ty < 0)
-        {
-            return;
+        if (sy < 0) {
+            sh += sy;   // sy가 음수면 그만큼 높이 줄임
+            sy = 0;
+        }
+
+        // 소스 이미지 범위를 벗어나지 않도록 보정
+        if (sx + sw > src.getWidth()) {
+            sw = src.getWidth() - sx;
+        }
+        if (sy + sh > src.getHeight()) {
+            sh = src.getHeight() - sy;
+        }
+
+        // 대상 이미지 범위 보정
+        if (tx < 0) {
+            sw += tx;   // tx가 음수면 그만큼 폭 줄임
+            sx -= tx;   // 소스 시작점 보정
+            tx = 0;
+        }
+        if (ty < 0) {
+            sh += ty;   // ty가 음수면 그만큼 높이 줄임
+            sy -= ty;   // 소스 시작점 보정
+            ty = 0;
+        }
+
+        if (sw <= 0 || sh <= 0) {
+            return; // 잘못된 크기면 그리지 않음
         }
 
         int[] srcPixels = new int[sw * sh];
-        src.getRGB(srcPixels, 0, sw, sx, sy, sw, sh);
+        src.getImpl().getRGB(srcPixels, 0, sw, sx, sy, sw, sh);
 
         int[] destPixels = new int[sw * sh];
-        Image image = convertToImage(Toolkit.graphics.getImage());
-        image.getRGB(destPixels, 0, sw, Toolkit.tranx+tx, Toolkit.trany+ty, sw, sh);
+        graphics.getImage().getRGB(destPixels, 0, sw, tx, ty, sw, sh);
 
         switch (mode) {
             case DRAW_COPY:
+//                graphics.getImpl().drawImage(src.getImpl(), sx, sy, sw, sh, tx, ty, sw, sh);
                 Image subImage = Image.createImage(src, sx, sy, sw, sh, 0);
-                Toolkit.graphics.drawImage(subImage, Toolkit.tranx+tx, Toolkit.trany+ty,0);
+                Toolkit.graphics.drawImage(subImage, tx, ty,20);
                 break;
             case DRAW_AND:
                 for (int x = 0; x < sw; x++) {
@@ -109,7 +107,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] & srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), Toolkit.tranx+tx, Toolkit.trany+ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
             case DRAW_OR:
                 for (int x = 0; x < sw; x++) {
@@ -117,7 +115,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] | srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), Toolkit.tranx+tx, Toolkit.trany+ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
             case DRAW_XOR:
                 for (int x = 0; x < sw; x++) {
@@ -125,7 +123,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] ^ srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), Toolkit.tranx+tx, Toolkit.trany+ty, 0);
+                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
         }
     }
@@ -154,20 +152,14 @@ public class Graphics2D {
         }
 
         Image invertedImg = Image.createRGBImage(rgbData, w, h, false);
-        Toolkit.graphics.drawImage(invertedImg, Toolkit.tranx+x, Toolkit.trany+y, Graphics.TOP | Graphics.LEFT);
+        Toolkit.graphics.drawImage(invertedImg, x, y, Graphics.TOP | Graphics.LEFT);
     }
 
     // Method to get a pixel color
     public int getPixel(int x, int y) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] getPixel");
-//        IScreen scr = Emulator.getEmulator().getScreen();
-//        final IImage screenImage = scr.getScreenImg();
-//        Image image = convertToImage(screenImage);
-//        int[] rgbData = new int[1];
-//        image.getRGB(rgbData, 0, 1, x, y, 1, 1);
-//        return rgbData[0];
         int[] rgbData = new int[1];
-        image.getRGB(rgbData, 0, 1, x, y, 1, 1);
+        Toolkit.graphics.getImage().getRGB(rgbData, 0, graphics.getImage().getWidth(), x, y, 1, 1);
         return rgbData[0];
     }
 
@@ -177,6 +169,7 @@ public class Graphics2D {
         int[] rgbData = new int[1];
         rgbData[0] = col;
         Toolkit.graphics.drawRGB(rgbData, 0, 1, x, y, 1, 1, true);
+//        graphics.fillRect(x,y,1,1,);
     }
 
     // Method to get a pixel mask
@@ -205,12 +198,6 @@ public class Graphics2D {
         // 새로운 이미지 생성
         Image maskableImage = Image.createImage(width, height);
         pixelMask = new boolean[width][height];
-
-        // 초기화 작업 (필요에 따라 추가 작업 가능)
-//        Graphics g = maskableImage.getGraphics();
-//        g.setColor(0x000000); // 검은색으로 초기화
-//        g.fillRect(0, 0, width, height);
-        // white by default?
 
         return maskableImage;
     }

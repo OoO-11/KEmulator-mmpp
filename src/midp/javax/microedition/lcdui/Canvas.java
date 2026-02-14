@@ -144,9 +144,6 @@ public abstract class Canvas extends Displayable {
 		if (!fullScreen) {
 			h -= (ticker == null ? Screen.fontHeight4 : Screen.fontHeight4 * 2);
 		}
-//		if(Emulator.zipPath != null) {
-//			return (h - 16);
-//		}
 		return h;
 	}
 

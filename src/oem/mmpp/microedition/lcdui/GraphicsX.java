@@ -129,7 +129,6 @@ public class GraphicsX extends Graphics {
         hh = maxY - yy;
 
         if (ww <= 0 || hh <= 0) {
-            Emulator.getEmulator().getLogStream().println("[mmpp] fillRect skip" + ww + " " + hh);
             return;
         }
 

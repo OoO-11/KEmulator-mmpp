@@ -8,190 +8,131 @@ import emulator.Emulator;
  */
 
 public final class MathFP {
-    private static final int SCALE_BITS = 16; // 소수부 비트 수
-    private static final long SCALE_FACTOR = 1L << SCALE_BITS; // 2^16 = 65536
+    public static final long PI = Double.doubleToLongBits(Math.PI);
+    public static final long E = Double.doubleToLongBits(Math.E);
+    public static final long MAX_VALUE = Double.doubleToLongBits(Double.MAX_VALUE);
+    public static final long MIN_VALUE = Double.doubleToLongBits(-Double.MAX_VALUE);
 
-    // 상수 정의
-    public static final long E = parseFPString("2.718281828459045");
-    public static final long PI = parseFPString("3.141592653589793");
-    public static final long MAX_VALUE = (1L << 62) - 1; // 62비트 사용 (안전 범위)
-    public static final long MIN_VALUE = -(1L << 62) + 1;
+    private MathFP() {
+    }
 
-    private MathFP() {} // 정적 클래스, 인스턴스화 방지
-
-    /**
-     * 정수를 고정 소수점(long)으로 변환
-     */
     public static long parseFP(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] parseFP "+f);
-        return f * SCALE_FACTOR;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] parseFP " + f);
+        return Double.doubleToLongBits((double) f);
     }
 
-    /**
-     * 문자열을 고정 소수점(long)으로 변환
-     */
     public static long parseFPString(String s) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] parseFPString "+s);
-        boolean negative = s.startsWith("-");
-        if (negative) {
-            s = s.substring(1);
-        }
-
-        int dotIndex = s.indexOf(".");
-        long integerPart = 0;
-        long fractionalPart = 0;
-
-        if (dotIndex >= 0) {
-            integerPart = Long.parseLong(s.substring(0, dotIndex));
-            String fracString = s.substring(dotIndex + 1);
-            fractionalPart = Long.parseLong(fracString);
-            fractionalPart = (fractionalPart * SCALE_FACTOR) / (long) Math.pow(10, fracString.length());
-        } else {
-            integerPart = Long.parseLong(s);
-        }
-
-        long result = (integerPart * SCALE_FACTOR) + fractionalPart;
-        return negative ? -result : result;
-    }
-
-    /**
-     * 고정 소수점(long)을 10진 표기 문자열로 변환
-     */
-    public static String toStringLF(long f, int precision) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] toStringLF "+f+" precision"+precision);
-        boolean negative = f < 0;
-        if (negative) {
-            f = -f;
-        }
-
-        long integerPart = f / SCALE_FACTOR;
-        long fractionalPart = ((f % SCALE_FACTOR) * (long) Math.pow(10, precision)) / SCALE_FACTOR;
-
-        String result = integerPart + "." + String.format("%0" + precision + "d", fractionalPart);
-        return negative ? "-" + result : result;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] parseFPString " + s);
+        double d = Double.parseDouble(s);
+        return Double.doubleToLongBits(d);
     }
 
     public static long toLong(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] toLong "+f);
-        return f / SCALE_FACTOR;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] toLong " + f);
+        return (long) Double.longBitsToDouble(f);
+    }
+
+    public static String toStringLF(long f, int precision) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] toStringLF " + f + ", precision=" + precision);
+        double d = Double.longBitsToDouble(f);
+        return String.format("%." + precision + "f", d);
     }
 
     public static String toStringE(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.toStringE] toLong "+f);
-        double value = f / (double) SCALE_FACTOR;
-        return String.format("%e", value);
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] toStringE " + f);
+        double d = Double.longBitsToDouble(f);
+        return String.format("%e", d);
     }
 
-    /**
-     * 고정 소수점(long) 덧셈 연산
-     */
     public static long add(long a, long b) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] add");
-        return a + b;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] add " + a + ", " + b);
+        return Double.doubleToLongBits(Double.longBitsToDouble(a) + Double.longBitsToDouble(b));
     }
 
     public static long sub(long a, long b) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] sub");
-        return a - b;
-    }
-
-    public static long divide(long a, long b){
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] divide");
-        if (b == 0) {
-            throw new ArithmeticException("Division by zero");
-        }
-        return (a * SCALE_FACTOR) / b;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] sub " + a + ", " + b);
+        return Double.doubleToLongBits(Double.longBitsToDouble(a) - Double.longBitsToDouble(b));
     }
 
     public static long multiply(long a, long b) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] multiply");
-        return (a * b) / SCALE_FACTOR;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] multiply " + a + ", " + b);
+        return Double.doubleToLongBits(Double.longBitsToDouble(a) * Double.longBitsToDouble(b));
     }
 
-    public static long sin(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] sin");
-        double radian = r / (double) SCALE_FACTOR; // 고정소수점 -> 부동소수점 변환
-        return (long) (Math.sin(radian) * SCALE_FACTOR); // 결과를 고정소수점으로 변환
+    public static long divide(long a, long b) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] divide " + a + ", " + b);
+        return Double.doubleToLongBits(Double.longBitsToDouble(a) / Double.longBitsToDouble(b));
     }
 
-    public static long cos(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] cos");
-        double radian = r / (double) SCALE_FACTOR;
-        return (long) (Math.cos(radian) * SCALE_FACTOR);
-    }
-
-    public static long tan(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] tan");
-        double radian = r / (double) SCALE_FACTOR;
-        return (long) (Math.tan(radian) * SCALE_FACTOR);
-    }
-
-    public static long sqrt(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] sqrt");
-        if (f < 0) {
-            throw new IllegalArgumentException("Negative input: " + f);
-        }
-        double value = f / (double) SCALE_FACTOR; // 고정소수점 -> 부동소수점 변환
-        return (long) (Math.sqrt(value) * SCALE_FACTOR); // 결과를 고정소수점으로 변환
-    }
     public static long abs(long f) {
-        return (f < 0) ? -f : f;
-    }
-
-    public static long acos(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] acos");
-        double value = r / (double) SCALE_FACTOR;
-        return (long) (Math.acos(value) * SCALE_FACTOR);
-    }
-
-    public static long asin(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] asin");
-        double value = r / (double) SCALE_FACTOR;
-        return (long) (Math.asin(value) * SCALE_FACTOR);
-    }
-
-    public static long atan(long r) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] atan");
-        double value = r / (double) SCALE_FACTOR;
-        return (long) (Math.atan(value) * SCALE_FACTOR);
-    }
-
-    public static long exp(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] exp");
-        double value = f / (double) SCALE_FACTOR;
-        return (long) (Math.exp(value) * SCALE_FACTOR);
-    }
-
-    public static long log(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] log");
-        if (f <= 0) {
-            throw new IllegalArgumentException("Log input must be positive");
-        }
-        double value = f / (double) SCALE_FACTOR;
-        return (long) (Math.log(value) * SCALE_FACTOR);
-    }
-
-    public static long max(long a, long b) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] max");
-        return (a > b) ? a : b;
-    }
-
-    public static long min(long a, long b) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] min");
-        return (a < b) ? a : b;
-    }
-
-    public static long pow(long base, long exp) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] pow");
-        double baseValue = base / (double) SCALE_FACTOR;
-        double expValue = exp / (double) SCALE_FACTOR;
-        return (long) (Math.pow(baseValue, expValue) * SCALE_FACTOR);
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] abs " + f);
+        return Double.doubleToLongBits(Math.abs(Double.longBitsToDouble(f)));
     }
 
     public static long round(long f) {
-        Emulator.getEmulator().getLogStream().println("[skt.m.MATHFP] round");
-        return (f + SCALE_FACTOR / 2) / SCALE_FACTOR * SCALE_FACTOR;
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] round " + f);
+        return Double.doubleToLongBits(Math.round(Double.longBitsToDouble(f)));
     }
 
+    public static long sqrt(long f) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] sqrt " + f);
+        return Double.doubleToLongBits(Math.sqrt(Double.longBitsToDouble(f)));
+    }
+
+    public static long pow(long b, long e) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] pow base=" + b + ", exp=" + e);
+        return Double.doubleToLongBits(Math.pow(Double.longBitsToDouble(b), Double.longBitsToDouble(e)));
+    }
+
+    public static long log(long f) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] log " + f);
+        return Double.doubleToLongBits(Math.log(Double.longBitsToDouble(f)));
+    }
+
+    public static long exp(long f) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] exp " + f);
+        return Double.doubleToLongBits(Math.exp(Double.longBitsToDouble(f)));
+    }
+
+    public static long sin(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] sin " + r);
+        return Double.doubleToLongBits(Math.sin(Double.longBitsToDouble(r)));
+    }
+
+    public static long cos(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] cos " + r);
+        return Double.doubleToLongBits(Math.cos(Double.longBitsToDouble(r)));
+    }
+
+    public static long tan(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] tan " + r);
+        return Double.doubleToLongBits(Math.tan(Double.longBitsToDouble(r)));
+    }
+
+    public static long asin(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] asin " + r);
+        return Double.doubleToLongBits(Math.asin(Double.longBitsToDouble(r)));
+    }
+
+    public static long acos(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] acos " + r);
+        return Double.doubleToLongBits(Math.acos(Double.longBitsToDouble(r)));
+    }
+
+    public static long atan(long r) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] atan " + r);
+        return Double.doubleToLongBits(Math.atan(Double.longBitsToDouble(r)));
+    }
+
+    // max/min
+    public static long max(long a, long b) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] max " + a + ", " + b);
+        return Double.doubleToLongBits(Math.max(Double.longBitsToDouble(a), Double.longBitsToDouble(b)));
+    }
+
+    public static long min(long a, long b) {
+        Emulator.getEmulator().getLogStream().println("[skt.m.MathFP] min " + a + ", " + b);
+        return Double.doubleToLongBits(Math.min(Double.longBitsToDouble(a), Double.longBitsToDouble(b)));
+    }
 
 }
