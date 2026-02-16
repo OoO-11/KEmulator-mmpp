@@ -6,6 +6,9 @@ import com.skt.m.AudioClipImpl;
 import java.io.IOException;
 
 public final class AudioSystem {
+
+    static AudioClipImpl ac;
+
     // Method to get supported audio formats
     public static String[] getClipFormats() {
         Emulator.getEmulator().getLogStream().println("[skt.m.AudioSystem] getClipFormats");
@@ -20,7 +23,8 @@ public final class AudioSystem {
         if (!isSupportedFormat(format)) {
             throw new UnsupportedFormatException("지원하지 않는 형식입니다: " + format);
         }
-        return new AudioClipImpl(); // 예시 반환값
+        ac = new AudioClipImpl();
+        return ac; // 예시 반환값
     }
 
     // Method to get the maximum volume for a given format
@@ -40,7 +44,7 @@ public final class AudioSystem {
         if (!isSupportedFormat(format)) {
             throw new UnsupportedFormatException("지원하지 않는 형식입니다: " + format);
         }
-        return 3; // 예시 반환값
+        return ac.volume; // 예시 반환값
     }
 
     // Method to set the volume for a given format
@@ -54,6 +58,7 @@ public final class AudioSystem {
             throw new IllegalArgumentException("볼륨 레벨은 0과 최대 볼륨 사이여야 합니다.");
         }
         // 볼륨 설정 로직 구현
+        ac.volume = level;
     }
 
     // Helper method to check if the format is supported

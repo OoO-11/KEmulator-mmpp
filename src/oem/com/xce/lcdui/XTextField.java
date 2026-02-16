@@ -43,7 +43,7 @@ public class XTextField implements IInputTarget{
         if (text == null) {
             text = "";
         }
-        this.text = text;
+        this.text = s;
 
         if (cursorPos > text.length()) {
             cursorPos = text.length();

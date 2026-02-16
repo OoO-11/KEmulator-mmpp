@@ -149,7 +149,7 @@ public class GraphicsX extends Graphics {
 
         }
         else{
-            if(this.alpha == 256) {
+            if(this.alpha >= 255) {
                 this.impl.fillRect(x, y, width, height);
             }
             else {
@@ -196,7 +196,7 @@ public class GraphicsX extends Graphics {
             this.impl.drawImage(ima, n, n2);
         }
         else{
-            if(this.alpha == 256) {
+            if(this.alpha >= 255) {
                 this.impl.setAlpha(255);
                 super.drawImage(image, n, n2, n3);
             }

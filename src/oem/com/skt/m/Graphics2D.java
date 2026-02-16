@@ -56,6 +56,8 @@ public class Graphics2D {
         }
 
         // 좌표와 크기 보정
+        tx = tx + Toolkit.tranx;
+        ty = ty + Toolkit.trany;
         if (sx < 0) {
             sw += sx;   // sx가 음수면 그만큼 폭 줄임
             sx = 0;
@@ -71,6 +73,13 @@ public class Graphics2D {
         }
         if (sy + sh > src.getHeight()) {
             sh = src.getHeight() - sy;
+        }
+
+        if (tx + sw > graphics.getImage().getWidth()) {
+            sw = src.getWidth() - tx;
+        }
+        if (ty + sh > graphics.getImage().getHeight()) {
+            sh = src.getHeight() - ty;
         }
 
         // 대상 이미지 범위 보정
@@ -147,6 +156,7 @@ public class Graphics2D {
             // 색상 반전 (알파값 유지)
             int alpha = color & 0xFF000000;
             int invertedColor = alpha | (~color & 0x00FFFFFF);
+//            int invertedColor = ~color & 0xFFFFFF;
 
             rgbData[i] = invertedColor;
         }

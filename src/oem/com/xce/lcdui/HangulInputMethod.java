@@ -34,7 +34,7 @@ public class HangulInputMethod implements InputMethod {
             inputJaeum(target, jaeumIndex);
         } else if (key >= Canvas.KEY_NUM1 && key <= Canvas.KEY_NUM3) {
             inputJungseong(target, key - Canvas.KEY_NUM1);
-        } else if (key == Canvas.KEY_CLR) {
+        } else if (key == Canvas.KEY_CLR || key == -8) {
             if (jongseong1 != 0) {
                 jongseong1 = 0;
                 updateCharacter(target);
