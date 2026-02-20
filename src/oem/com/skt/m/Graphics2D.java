@@ -152,11 +152,7 @@ public class Graphics2D {
         // 픽셀 색상을 반전 (네거티브 효과)
         for (int i = 0; i < rgbData.length; i++) {
             int color = rgbData[i];
-
-            // 색상 반전 (알파값 유지)
-            int alpha = color & 0xFF000000;
-            int invertedColor = alpha | (~color & 0x00FFFFFF);
-//            int invertedColor = ~color & 0xFFFFFF;
+            int invertedColor = ~color & 0xFFFFFF;
 
             rgbData[i] = invertedColor;
         }

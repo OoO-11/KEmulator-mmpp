@@ -95,7 +95,12 @@ public class Graphics
 	}
 
 	public void clipRect(final int n, final int n2, final int n3, final int n4) {
-		this.impl.clipRect(n, n2, n3, n4);
+		if(Emulator.zipPath != null) {
+			this.impl.clipRect(n, n2, n3+1, n4+1);
+		}
+		else{
+			this.impl.clipRect(n, n2, n3, n4);
+		}
 		if (xrayGraphics != null)
 			this.xrayGraphics.clipRect(n, n2, n3, n4);
 	}
@@ -476,7 +481,12 @@ public class Graphics
 
 	public void setClip(final int n, final int n2, final int n3, final int n4) {
 		++Profiler.drawCallCount;
-		this.impl.setClip(n, n2, n3, n4);
+		if(Emulator.zipPath != null) {
+			this.impl.setClip(n, n2, n3+1, n4+1);
+		}
+		else{
+			this.impl.setClip(n, n2, n3, n4);
+		}
 		if (xrayGraphics != null)
 			this.xrayGraphics.setClip(n, n2, n3, n4);
 	}
