@@ -15,7 +15,7 @@ public class Graphics2D {
     public static final int DRAW_OR = 2;
     public static final int DRAW_XOR = 3;
 
-    private static Graphics graphics;
+    private final Graphics graphics;
     private static boolean[][] pixelMask;
     int transx, transy;
 
@@ -106,9 +106,9 @@ public class Graphics2D {
 
         switch (mode) {
             case DRAW_COPY:
-//                graphics.getImpl().drawImage(src.getImpl(), sx, sy, sw, sh, tx, ty, sw, sh);
-                Image subImage = Image.createImage(src, sx, sy, sw, sh, 0);
-                Toolkit.graphics.drawImage(subImage, tx, ty,20);
+                graphics.getImpl().drawImage(src.getImpl(), sx, sy, sw, sh, tx, ty, sw, sh);
+//                Image subImage = Image.createImage(src, sx, sy, sw, sh, 0);
+//                Toolkit.graphics.drawImage(subImage, tx, ty,20);
                 break;
             case DRAW_AND:
                 for (int x = 0; x < sw; x++) {
@@ -116,7 +116,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] & srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
+                graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
             case DRAW_OR:
                 for (int x = 0; x < sw; x++) {
@@ -124,7 +124,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] | srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
+                graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
             case DRAW_XOR:
                 for (int x = 0; x < sw; x++) {
@@ -132,7 +132,7 @@ public class Graphics2D {
                         destPixels[y*sw + x] = destPixels[y*sw + x] ^ srcPixels[y*sw + x];
                     }
                 }
-                Toolkit.graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
+                graphics.drawImage(Image.createRGBImage(destPixels, sw, sh, false), tx, ty, 20);
                 break;
         }
     }
@@ -158,14 +158,14 @@ public class Graphics2D {
         }
 
         Image invertedImg = Image.createRGBImage(rgbData, w, h, false);
-        Toolkit.graphics.drawImage(invertedImg, x, y, Graphics.TOP | Graphics.LEFT);
+        graphics.drawImage(invertedImg, x, y, Graphics.TOP | Graphics.LEFT);
     }
 
     // Method to get a pixel color
     public int getPixel(int x, int y) {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] getPixel");
         int[] rgbData = new int[1];
-        Toolkit.graphics.getImage().getRGB(rgbData, 0, graphics.getImage().getWidth(), x, y, 1, 1);
+        graphics.getImage().getRGB(rgbData, 0, graphics.getImage().getWidth(), x, y, 1, 1);
         return rgbData[0];
     }
 
@@ -174,7 +174,7 @@ public class Graphics2D {
         Emulator.getEmulator().getLogStream().println("[skt.m.Graphics2D] setPixel");
         int[] rgbData = new int[1];
         rgbData[0] = col;
-        Toolkit.graphics.drawRGB(rgbData, 0, 1, x, y, 1, 1, true);
+        graphics.drawRGB(rgbData, 0, 1, x, y, 1, 1, true);
 //        graphics.fillRect(x,y,1,1,);
     }
 
