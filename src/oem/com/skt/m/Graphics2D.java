@@ -76,10 +76,10 @@ public class Graphics2D {
         }
 
         if (tx + sw > graphics.getImage().getWidth()) {
-            sw = src.getWidth() - tx;
+            sw = graphics.getImage().getWidth() - tx;
         }
         if (ty + sh > graphics.getImage().getHeight()) {
-            sh = src.getHeight() - ty;
+            sh = graphics.getImage().getHeight() - ty;
         }
 
         // 대상 이미지 범위 보정

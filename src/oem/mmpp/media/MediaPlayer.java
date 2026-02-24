@@ -33,7 +33,6 @@ public class MediaPlayer {
 
 	private byte[] data;
 	private int loopCount;
-	private int volume;
 
 	private Thread workerThread;
 	private BlockingQueue<Runnable> commandQueue;
@@ -119,7 +118,6 @@ public class MediaPlayer {
 
 	public void setVolumeLevel(String level) {
 		Emulator.getEmulator().getLogStream().println("[mmpp] setVolumeLevel to " + level);
-		this.volume = Integer.parseInt(level);
 		currentVolume = level;
 	}
 
@@ -138,7 +136,7 @@ public class MediaPlayer {
 						MMFPlayer.stop();
 					}
 					this.loopCount = loop ? 255 : 1;
-					MMFPlayer.playSafe(this.loopCount, this.volume);
+					MMFPlayer.playSafe(this.loopCount, Integer.parseInt(currentVolume));
 					Emulator.getEmulator().getLogStream().println("[mmpp] start act" + currentVolume);
 				});
 			} catch (InterruptedException e) {

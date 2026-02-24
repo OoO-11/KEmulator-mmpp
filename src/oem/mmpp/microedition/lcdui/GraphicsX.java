@@ -178,6 +178,8 @@ public class GraphicsX extends Graphics {
     }
 
     public void drawImage(Image image, int n, int n2, int n3) {
+        if(image==null)
+            return;
         int w = image.getWidth();
         int h = image.getHeight();
         int[] pixels = new int[w * h];

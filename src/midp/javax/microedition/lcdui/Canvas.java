@@ -249,6 +249,52 @@ public abstract class Canvas extends Displayable {
 	}
 
 	public int getGameAction(final int n) {
+		if(Settings.detectedAPIs.contains("mmpp")){
+			int n3 = 0;
+			switch (n) {
+				case -1: {
+					n3 = 1;
+					break;
+				}
+				case -2: {
+					n3 = 6;
+					break;
+				}
+				case -3: {
+					n3 = 2;
+					break;
+				}
+				case -4: {
+					n3 = 5;
+					break;
+				}
+				case -5: {
+					n3 = 8;
+					break;
+				}
+				case -6:
+				case 42: {
+					n3 = 11;
+					break;
+				}
+				case -7:
+				case 35: {
+					n3 = 12;
+					break;
+				}
+				case -8:
+				case 57: {
+					n3 = 10;
+					break;
+				}
+				case -10:
+                case 55: {
+					n3 = 9;
+					break;
+				}
+			}
+			return n3;
+		}
 		int n2 = 0;
 		int n3 = 0;
 		switch (n) {

@@ -112,6 +112,7 @@ public final class Settings {
 
 	public static final Set<String> protectedPackages = new HashSet<String>();
 	public static final Map<String, String> systemProperties = new HashMap<String, String>();
+	public static final Set<String> detectedAPIs = new HashSet<String>();
 
 	public static boolean enableSecurity = true;
 	public static boolean ignoreServiceRepaints;

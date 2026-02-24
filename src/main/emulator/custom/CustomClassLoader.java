@@ -14,6 +14,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 public final class CustomClassLoader extends ClassLoader {
+	private boolean renamedScanDone = false;
+
 	public CustomClassLoader(final ClassLoader classLoader) {
 		super(classLoader);
 	}
@@ -88,6 +90,8 @@ public final class CustomClassLoader extends ClassLoader {
 	}
 
 	private byte[] load(String s) throws Exception {
+		ensureRenamedClassesScanned();
+
 		InputStream inputStream;
 		if (Emulator.midletJar == null) {
 			final File fileFromClassPath;
@@ -112,6 +116,54 @@ public final class CustomClassLoader extends ClassLoader {
 			inputStream.close();
 		}
 		return classWriter.toByteArray();
+	}
+
+	private void ensureRenamedClassesScanned() {
+		if (CustomClassAdapter.hasRenamedMethods || renamedScanDone) return;
+		renamedScanDone = true;
+		try {
+			for (Object o : Emulator.jarClasses) {
+				String clsDot = (String) o;
+				String path = clsDot.replace('.', '/') + ".class";
+				InputStream is = null;
+				if (Emulator.midletJar != null) {
+					ZipFile zf = new ZipFile(Emulator.midletJar);
+					ZipEntry e = zf.getEntry(path);
+					if (e != null) is = zf.getInputStream(e);
+				} else {
+					File f = Emulator.getFileFromClassPath(path);
+					if (f != null && f.exists()) is = new FileInputStream(f);
+				}
+				if (is == null) continue;
+				try {
+					ClassReader cr = new ClassReader(is);
+					final boolean[] will = new boolean[1];
+					cr.accept(new ClassVisitor(Opcodes.ASM9) {
+						String superName;
+						@Override
+						public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+							this.superName = superName;
+							super.visit(version, access, name, signature, superName, interfaces);
+						}
+						@Override
+						public org.objectweb.asm.MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+							if ("()V".equals(descriptor) && ("stop".equals(name) || "resume".equals(name) || "suspend".equals(name))) {
+								if ("java/lang/Thread".equals(this.superName)) will[0] = true;
+							}
+							return super.visitMethod(access, name, descriptor, signature, exceptions);
+						}
+					}, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+					if (will[0]) {
+						CustomClassAdapter.hasRenamedMethods = true;
+						CustomClassAdapter.renamedClasses.add(clsDot.replace('.', '/'));
+					}
+				} finally {
+					try { is.close(); } catch (Exception ignored) {}
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public static boolean isProtected(String s, boolean stack) {

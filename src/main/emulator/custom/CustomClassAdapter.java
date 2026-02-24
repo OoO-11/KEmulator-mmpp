@@ -18,6 +18,12 @@ public final class CustomClassAdapter extends ClassVisitor implements Opcodes {
 	private String parentClassName;
 
 	public final MethodVisitor visitMethod(int acc, String name, String desc, final String sign, final String[] array) {
+		// MMPP API 감지 (메서드 시그니처에 mmpp 참조 있는 경우)
+		if (desc.contains("mmpp/") || (sign != null && sign.contains("mmpp/"))) {
+			Settings.detectedAPIs.add("mmpp");
+			Emulator.getEmulator().getLogStream().println("[DETECTED API] MMPP in method signature: " + this.className + "." + name);
+		}
+
 		Label_0037:
 		{
 			String s4;
@@ -75,6 +81,14 @@ public final class CustomClassAdapter extends ClassVisitor implements Opcodes {
 	}
 
 	public final void visit(final int n, final int n2, final String s, final String s2, String s3, final String[] array) {
+		// MMPP API 감지 (부모 클래스 또는 인터페이스에 mmpp 참조)
+		if ((s3 != null && s3.startsWith("mmpp/")) || (array != null && java.util.Arrays.stream(array).anyMatch(i -> i.startsWith("mmpp/")))) {
+			Settings.detectedAPIs.add("mmpp");
+			if (s3 != null && s3.startsWith("mmpp/")) {
+				Emulator.getEmulator().getLogStream().println("[DETECTED API] MMPP parent class: " + s3);
+			}
+		}
+
 		parentClassName = s3;
 		if (s3.equals("java/util/TimerTask")) {
 			super.visit(n, n2, s, s2, "emulator/custom/subclass/SubTimerTask", array);
@@ -103,6 +117,12 @@ public final class CustomClassAdapter extends ClassVisitor implements Opcodes {
 	}
 
 	public final FieldVisitor visitField(final int n, final String s, String s2, final String s3, final Object o) {
+		// MMPP API 감지 (필드 타입에 mmpp 참조 있는 경우)
+		if (s2.contains("mmpp/")) {
+			Settings.detectedAPIs.add("mmpp");
+			Emulator.getEmulator().getLogStream().println("[DETECTED API] MMPP in field type: " + this.className + "." + s);
+		}
+
 		if (s2.equals("Ljava/util/TimerTask;")) {
 			s2 = "Lemulator/custom/subclass/SubTimerTask;";
 		} else if (s2.equals("Ljava/util/Timer;")) {
